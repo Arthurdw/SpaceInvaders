@@ -5,24 +5,30 @@ namespace SpaceInvaders
 {
     public static class Entities
     {
+        public static int Size = 50;
+
         public enum EntityType
         {
-            Octopus
+            Crab
         }
 
         public class Entity
         {
-            private const int Size = 50;
-
             protected int X;
             protected int Y;
             protected Bitmap Shape;
+            protected Bitmap Shape2;
+
+            private bool _isFirst;
 
             public Entity(int x, int y, EntityType entityType)
             {
                 this.X = x;
                 this.Y = y;
-                this.Shape = this.GetBitmap($"./assets/{Enum.GetName(typeof(EntityType), entityType)}.png");
+                string name = Enum.GetName(typeof(EntityType), entityType);
+                this.Shape = this.GetBitmap($"./assets/{name}.png");
+                this.Shape2 = this.GetBitmap($"./assets/{name}2.png");
+                this._isFirst = true;
             }
 
             public Bitmap GetBitmap(string imgPath)
@@ -38,7 +44,13 @@ namespace SpaceInvaders
             }
 
             public void Draw(Graphics graphics)
-                => graphics.DrawImage(this.Shape, this.X, this.Y);
+            {
+                this.Draw(graphics, this._isFirst);
+                this._isFirst = !this._isFirst;
+            }
+
+            public void Draw(Graphics graphics, bool first)
+                => graphics.DrawImage(first ? this.Shape : this.Shape2, this.X, this.Y);
         }
     }
 }

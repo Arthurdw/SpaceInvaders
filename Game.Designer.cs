@@ -29,26 +29,34 @@ namespace SpaceInvaders
         /// </summary>
         private void InitializeComponent()
         {
+            this.components = new System.ComponentModel.Container();
             this.pnl = new System.Windows.Forms.Panel();
+            this.FrameHandler = new System.Windows.Forms.Timer(this.components);
             this.SuspendLayout();
             // 
             // pnl
             // 
-            this.pnl.Dock = System.Windows.Forms.DockStyle.Fill;
             this.pnl.Location = new System.Drawing.Point(0, 0);
             this.pnl.Name = "pnl";
-            this.pnl.Size = new System.Drawing.Size(738, 672);
+            this.pnl.Size = new System.Drawing.Size(750, 750);
             this.pnl.TabIndex = 0;
             this.pnl.Paint += new System.Windows.Forms.PaintEventHandler(this.DrawPanel);
+            // 
+            // FrameHandler
+            // 
+            this.FrameHandler.Tick += new System.EventHandler(this.FrameHandler_Tick);
             // 
             // Game
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(738, 672);
+            this.ClientSize = new System.Drawing.Size(749, 751);
             this.Controls.Add(this.pnl);
             this.Name = "Game";
+            this.StartPosition = System.Windows.Forms.FormStartPosition.CenterScreen;
             this.Text = "Space Invaders";
+            this.SizeChanged += new System.EventHandler(this.HandleWindowContentLocation);
+            this.KeyDown += new System.Windows.Forms.KeyEventHandler(this.HandleFormKeydown);
             this.ResumeLayout(false);
 
         }
@@ -56,6 +64,7 @@ namespace SpaceInvaders
         #endregion
 
         private System.Windows.Forms.Panel pnl;
+        private System.Windows.Forms.Timer FrameHandler;
     }
 }
 

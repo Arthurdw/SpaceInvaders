@@ -1,9 +1,26 @@
 ﻿using System.Drawing;
+using System.Drawing.Text;
+using System.Runtime.InteropServices;
 
 namespace SpaceInvaders
 {
     public static class Config
     {
+        public static Font Font;
+        public static FontFamily FontFamily;
+
+        static Config()
+        {
+            PrivateFontCollection pfc = new PrivateFontCollection();
+            int fontLength = Properties.Resources.MachineStd.Length;
+            System.IntPtr data = Marshal.AllocCoTaskMem(fontLength);
+            Marshal.Copy(Properties.Resources.MachineStd, 0, data, fontLength);
+            pfc.AddMemoryFont(data, fontLength);
+
+            FontFamily = pfc.Families[0];
+            Font = new Font(FontFamily, 24);
+        }
+
         public static class Colors
         {
             public static Color Back = Color.FromArgb(41, 50, 65);
