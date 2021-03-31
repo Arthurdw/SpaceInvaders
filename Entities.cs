@@ -9,7 +9,7 @@ namespace SpaceInvaders
 
         public enum EntityType
         {
-            Crab
+            Crab, Octopus
         }
 
         public class Entity

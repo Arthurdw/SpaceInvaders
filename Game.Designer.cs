@@ -44,6 +44,7 @@ namespace SpaceInvaders
             // 
             // FrameHandler
             // 
+            this.FrameHandler.Interval = 1;
             this.FrameHandler.Tick += new System.EventHandler(this.FrameHandler_Tick);
             // 
             // Game

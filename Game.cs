@@ -9,11 +9,7 @@ namespace SpaceInvaders
 {
     public partial class Game : Form
     {
-        private Action<Graphics> _callback;
-
-        private int _welcomeEntitiesLeft;
-        private bool _welcomeEntitiesFirst;
-        private int _welcomeEntitiesIteration;
+        private Action<Panel, Graphics> _callback;
 
         public Game()
         {
@@ -27,10 +23,7 @@ namespace SpaceInvaders
 
             this.ForeColor = Config.Colors.Primary;
             this.BackColor = Config.Colors.Back;
-            this._callback = DrawWelcomeScreen;
-            this._welcomeEntitiesLeft = - Entities.Size;
-            this._welcomeEntitiesFirst = true;
-            this._welcomeEntitiesIteration = 0;
+            this._callback = WelcomeScreen.Draw;
             FrameHandler.Start();
 
             typeof(Panel).InvokeMember("DoubleBuffered",
@@ -42,50 +35,7 @@ namespace SpaceInvaders
         {
             e.Graphics.TextRenderingHint = TextRenderingHint.AntiAlias;
             e.Graphics.SmoothingMode = SmoothingMode.AntiAlias;
-            this._callback(e.Graphics);
-        }
-
-        private void DrawWelcomeScreen(Graphics g)
-        {
-            this._welcomeEntitiesLeft += Entities.Size / 8;
-            if (this._welcomeEntitiesLeft >= pnl.Width / 10 - Entities.Size) 
-                this._welcomeEntitiesLeft = -Entities.Size;
-
-            for (int i = 0; i < 11; i++)
-            {
-                int x = (pnl.Width / 10 - Entities.Size) * i + Entities.Size * i;
-                new Entities.Entity(this._welcomeEntitiesLeft + x, 10, Entities.EntityType.Crab).Draw(g, this._welcomeEntitiesFirst);
-                new Entities.Entity(- this._welcomeEntitiesLeft + x - Entities.Size, pnl.Height - Entities.Size, Entities.EntityType.Crab).Draw(g, this._welcomeEntitiesFirst);
-            }
-
-            this._welcomeEntitiesFirst = !this._welcomeEntitiesFirst;
-            string message = "SPACE\r\nINVADERS";
-            StringFormat sf = new StringFormat
-            {
-                LineAlignment = StringAlignment.Center,
-                Alignment = StringAlignment.Center
-            };
-
-            Font font = new Font(Config.FontFamily, (float)pnl.Width / 12);
-            Color clr = Config.Colors.Accent;
-
-            g.DrawString(message, font,
-                new SolidBrush(Color.FromArgb(64, clr)),
-                new RectangleF(0 + 5, 0 + 5, pnl.Width, pnl.Height), sf);
-        
-            g.DrawString(message, font,
-                new SolidBrush(clr),
-                new RectangleF(0, 0, pnl.Width, pnl.Height), sf);
-
-            if (this._welcomeEntitiesIteration >= 8)
-                g.DrawString("Press enter...", Config.Font,
-                    new SolidBrush(Config.Colors.Primary),
-                    new RectangleF(0, (float)pnl.Height / 3, pnl.Width, pnl.Height), sf);
-
-            if (this._welcomeEntitiesIteration >= 16) this._welcomeEntitiesIteration = 0;
-            else this._welcomeEntitiesIteration++;
-            
-            pnl.BackColor = Config.Colors.PrimaryDarkest;
+            this._callback(pnl, e.Graphics);
         }
 
         private void HandleWindowContentLocation(object sender, EventArgs e)
@@ -111,6 +61,23 @@ namespace SpaceInvaders
                 case Keys.F11:
                     this.ToggleScreen(this.FormBorderStyle != FormBorderStyle.None);
                     break;
+                case Keys.Enter:
+                    if (!WelcomeScreen.ScreenPassed)
+                    {
+                        WelcomeScreen.ScreenPassed = false;
+                        this._callback = GameScreen.Draw;
+                    }
+                    break;
+                case Keys.Left:
+                case Keys.A:
+                    if (GameScreen.CurrentLocation <= 10) GameScreen.CurrentLocation = 10;
+                    else GameScreen.CurrentLocation -= 10;
+                    break;
+                case Keys.Right:
+                case Keys.D:
+                    if (GameScreen.CurrentLocation >= pnl.Width - 10 - Entities.Size) GameScreen.CurrentLocation = pnl.Width - 10 - Entities.Size;
+                    else GameScreen.CurrentLocation += 10;
+                    break;
             }
         }
 
@@ -121,8 +88,6 @@ namespace SpaceInvaders
         }
 
         private void FrameHandler_Tick(object sender, EventArgs e)
-        {
-            pnl.Refresh();
-        }
+            => pnl.Refresh();
     }
 }
