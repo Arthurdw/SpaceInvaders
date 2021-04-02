@@ -3,12 +3,30 @@ using System.Windows.Forms;
 
 namespace SpaceInvaders
 {
+    /// <summary>
+    /// This is the screen which gets shown when the client opens the game.
+    /// </summary>
     public static class WelcomeScreen
     {
+        /// <summary>
+        /// The current amount of pixels the moving entities are currently at. (horizontally)
+        /// </summary>
         public static int EntitiesLeft;
+        /// <summary>
+        /// Whether or not the entities animation is currently the first frame.
+        /// </summary>
         public static bool EntitiesFirst;
+        /// <summary>
+        /// The current iteration (amount of times the screen has updated).
+        /// </summary>
         public static int EntitiesIteration;
+        /// <summary>
+        /// A separate iteration count for the `Press enter/space to play` message. Same principle as the <see cref="EntitiesIteration"/>
+        /// </summary>
         public static int PressEnterToPlayIteration;
+        /// <summary>
+        /// Whether or not the welcome screen has passed.
+        /// </summary>
         public static bool ScreenPassed;
 
         static WelcomeScreen()
@@ -17,9 +35,12 @@ namespace SpaceInvaders
             ScreenPassed = false;
         }
 
+        /// <summary>
+        /// Paints the WelcomeScreen to the user.
+        /// </summary>
         public static void Draw(Panel pnl, Graphics g)
         {
-            if (EntitiesIteration == 5)
+            if (EntitiesIteration == 8)
             {
                 EntitiesLeft += Entities.Size / 8;
                 if (EntitiesLeft >= pnl.Width / 10 - Entities.Size)
@@ -28,7 +49,7 @@ namespace SpaceInvaders
                 EntitiesFirst = !EntitiesFirst;
                 EntitiesIteration = 0;
             }
-
+            
             for (int i = 0; i < 11; i++)
             {
                 int x = (pnl.Width / 10 - Entities.Size) * i + Entities.Size * i;
@@ -55,7 +76,7 @@ namespace SpaceInvaders
                 new RectangleF(0, 0, pnl.Width, pnl.Height), sf);
 
             if (PressEnterToPlayIteration >= 15)
-                g.DrawString("Press enter...", Config.Font,
+                g.DrawString("Press space/enter...", Config.Font,
                     new SolidBrush(Config.Colors.Primary),
                     new RectangleF(0, (float)pnl.Height / 3, pnl.Width, pnl.Height), sf);
 

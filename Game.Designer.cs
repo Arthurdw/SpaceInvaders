@@ -58,6 +58,7 @@ namespace SpaceInvaders
             this.Text = "Space Invaders";
             this.SizeChanged += new System.EventHandler(this.HandleWindowContentLocation);
             this.KeyDown += new System.Windows.Forms.KeyEventHandler(this.HandleFormKeydown);
+            this.KeyUp += new System.Windows.Forms.KeyEventHandler(this.HandleFormKeyup);
             this.ResumeLayout(false);
 
         }
