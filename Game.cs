@@ -12,6 +12,9 @@ namespace SpaceInvaders
     {
         private List<Keys> _currentPressed;
         private Action<Panel, Graphics> _callback;
+        private Action<Panel, Graphics> _overlay;
+        private DateTime _lastShotFired;
+        private DateTime _overlayCooldown;
 
         public Game()
         {
@@ -26,7 +29,10 @@ namespace SpaceInvaders
             this.ForeColor = Config.Colors.Primary;
             this.BackColor = Config.Colors.Back;
             this._callback = WelcomeScreen.Draw;
+            this._overlay = null;
+            this._overlayCooldown = DateTime.MinValue;
             this._currentPressed = new List<Keys>();
+            this._lastShotFired = DateTime.MinValue;
             FrameHandler.Start();
 
             typeof(Panel).InvokeMember("DoubleBuffered",
@@ -40,6 +46,7 @@ namespace SpaceInvaders
             e.Graphics.SmoothingMode = SmoothingMode.AntiAlias;
             this.HandleKeyEvents();
             this._callback(pnl, e.Graphics);
+            _overlay?.Invoke(pnl, e.Graphics);
         }
 
         private void HandleWindowContentLocation(object sender, EventArgs e)
@@ -57,7 +64,8 @@ namespace SpaceInvaders
 
         private void HandleFormKeydown(object sender, KeyEventArgs e)
         {
-            if (!this._currentPressed.Contains(e.KeyCode)) 
+            if (e.KeyCode == Keys.F11) this.HandleKeyEvent(e.KeyCode);
+            else if (!this._currentPressed.Contains(e.KeyCode)) 
                 this._currentPressed.Add(e.KeyCode);
         }
 
@@ -87,29 +95,66 @@ namespace SpaceInvaders
             switch (key)
             {
                 case Keys.Escape:
-                    this.ToggleScreen(false);
+                    {
+                        if (!WelcomeScreen.ScreenPassed)
+                        {
+                            this.ToggleScreen(false);
+                            break;
+                        }
+
+                        DateTime dt = DateTime.Now;
+                    
+                        if ((dt - this._overlayCooldown).Milliseconds >= 500)
+                        {
+                            // this.ToggleScreen(false);
+                            GameScreen.IsPaused = !GameScreen.IsPaused;
+
+                            // Can't use ternary here because of C# types... sad
+                            if (GameScreen.IsPaused) this._overlay = EscapeMenu.Draw;
+                            else this._overlay = null;
+
+                            this._overlayCooldown = dt;
+                        }
+                    }
                     break;
                 case Keys.F11:
                     this.ToggleScreen(this.FormBorderStyle != FormBorderStyle.None);
                     break;
                 case Keys.Space:
                 case Keys.Enter:
-                    if (!WelcomeScreen.ScreenPassed)
                     {
-                        WelcomeScreen.ScreenPassed = true;
-                        this._callback = GameScreen.Draw;
+                        if (!WelcomeScreen.ScreenPassed)
+                        {
+                            WelcomeScreen.ScreenPassed = true;
+                            this._callback = GameScreen.Draw;
+                        }
+                        else if (!GameScreen.IsPaused)
+                        {
+                            DateTime dt = DateTime.Now;
+                            if ((dt - this._lastShotFired).Milliseconds >= 50)
+                            {
+                                this._lastShotFired = dt;
+                                GameScreen.Shoot();
+                            }
+                        }
                     }
-                    else GameScreen.Shoot();
                     break;
                 case Keys.Left:
                 case Keys.A:
-                    if (GameScreen.CurrentXLocation <= 10) GameScreen.CurrentXLocation = 10;
-                    else GameScreen.CurrentXLocation -= 10;
+                    if (!GameScreen.IsPaused)
+                    {
+                        if (GameScreen.CurrentXLocation <= 10) GameScreen.CurrentXLocation = 10;
+                        else GameScreen.CurrentXLocation -= 10;
+                    }
                     break;
                 case Keys.Right:
                 case Keys.D:
-                    if (GameScreen.CurrentXLocation >= pnl.Width - 10 - Entities.Size) GameScreen.CurrentXLocation = pnl.Width - 10 - Entities.Size;
-                    else GameScreen.CurrentXLocation += 10;
+                    if (!GameScreen.IsPaused)
+                    {
+                        if (GameScreen.CurrentXLocation >= pnl.Width - 10 - Entities.Size)
+                            GameScreen.CurrentXLocation = pnl.Width - 10 - Entities.Size;
+                        else GameScreen.CurrentXLocation += 10;
+                    }
                     break;
             }
         }

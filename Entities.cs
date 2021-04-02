@@ -117,6 +117,10 @@ namespace SpaceInvaders
             /// Whether or not the bullet was sent by the player or an enemy.
             /// </summary>
             private readonly bool _byPlayer;
+            /// <summary>
+            /// The size of the steps that the bullet takes, increase this to improve the speed of the bullets.
+            /// </summary>
+            public static int StepSize = 20;
 
             /// <summary>
             /// Spawn a new bullet.
@@ -136,14 +140,14 @@ namespace SpaceInvaders
             /// Draw the current bullet to the screen.
             /// </summary>
             public void Draw(Graphics g)
-                => g.FillRectangle(new SolidBrush(Color.Red), this._x, this.Y, 2, 2);
+                => g.FillRectangle(new SolidBrush(Config.Colors.PrimaryDark), this._x, this.Y, Entities.Size / 10, Entities.Size / 2);
 
             /// <summary>
             /// Perform a step with the bullet.
             /// </summary>
             public void PerformStep(Graphics g)
             {
-                this.Y += _byPlayer ? -1 : 1;
+                this.Y += _byPlayer ? -StepSize : StepSize;
                 this.Draw(g);
             }
         }

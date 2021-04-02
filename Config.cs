@@ -18,6 +18,12 @@ namespace SpaceInvaders
         /// </summary>
         public static FontFamily FontFamily;
 
+        public static StringFormat StringFormat = new StringFormat
+        {
+            LineAlignment = StringAlignment.Center,
+            Alignment = StringAlignment.Center
+        };
+
         static Config()
         {
             // Get our custom font and assign the two font variables.
@@ -41,6 +47,28 @@ namespace SpaceInvaders
             public static Color Primary = Color.FromArgb(224, 251, 252);
             public static Color PrimaryDark = Color.FromArgb(152, 193, 217);
             public static Color PrimaryDarkest = Color.FromArgb(61, 90, 128);
+        }
+
+        public static class Game
+        {
+            public static class WelcomeScreen
+            {
+                public static string GameTitleMessage = "SPACE\r\nINVADERS";
+                public static string ContinueToGameMessage = "Press space/enter...";
+
+                public static Entities.EntityType TopEntityType = Entities.EntityType.Octopus;
+                public static Entities.EntityType BottomEntityType = Entities.EntityType.Crab;
+            }
+
+            public static class EscapeMenu
+            {
+                public static string TopMessage = "Paused - Menu";
+                public static Color BackgroundColor = Color.FromArgb(50, Colors.Back);
+
+                public static string GoBackToMainScreenMessage = "Main screen";
+                public static string GoBackToGameMessage = "BACK";
+                public static string ExitGameMessage = "Exit";
+            }
         }
     }
 }

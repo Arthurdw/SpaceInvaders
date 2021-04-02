@@ -53,32 +53,25 @@ namespace SpaceInvaders
             for (int i = 0; i < 11; i++)
             {
                 int x = (pnl.Width / 10 - Entities.Size) * i + Entities.Size * i;
-                new Entities.Entity(EntitiesLeft + x, 10, Entities.EntityType.Octopus).Draw(g, EntitiesFirst);
-                new Entities.Entity(-EntitiesLeft + x - Entities.Size, pnl.Height - Entities.Size, Entities.EntityType.Crab).Draw(g, EntitiesFirst);
+                new Entities.Entity(EntitiesLeft + x, 10, Config.Game.WelcomeScreen.TopEntityType).Draw(g, EntitiesFirst);
+                new Entities.Entity(-EntitiesLeft + x - Entities.Size, pnl.Height - Entities.Size, Config.Game.WelcomeScreen.BottomEntityType).Draw(g, EntitiesFirst);
             }
-            
-            string message = "SPACE\r\nINVADERS";
-            StringFormat sf = new StringFormat
-            {
-                LineAlignment = StringAlignment.Center,
-                Alignment = StringAlignment.Center
-            };
 
             Font font = new Font(Config.FontFamily, (float)pnl.Width / 12);
             Color clr = Config.Colors.Accent;
 
-            g.DrawString(message, font,
+            g.DrawString(Config.Game.WelcomeScreen.GameTitleMessage, font,
                 new SolidBrush(Color.FromArgb(64, clr)),
-                new RectangleF(0 + 5, 0 + 5, pnl.Width, pnl.Height), sf);
+                new RectangleF(0 + 5, 0 + 5, pnl.Width, pnl.Height), Config.StringFormat);
 
-            g.DrawString(message, font,
+            g.DrawString(Config.Game.WelcomeScreen.GameTitleMessage, font,
                 new SolidBrush(clr),
-                new RectangleF(0, 0, pnl.Width, pnl.Height), sf);
+                new RectangleF(0, 0, pnl.Width, pnl.Height), Config.StringFormat);
 
             if (PressEnterToPlayIteration >= 15)
-                g.DrawString("Press space/enter...", Config.Font,
+                g.DrawString(Config.Game.WelcomeScreen.ContinueToGameMessage, Config.Font,
                     new SolidBrush(Config.Colors.Primary),
-                    new RectangleF(0, (float)pnl.Height / 3, pnl.Width, pnl.Height), sf);
+                    new RectangleF(0, (float)pnl.Height / 3, pnl.Width, pnl.Height), Config.StringFormat);
 
             if (PressEnterToPlayIteration >= 30) PressEnterToPlayIteration = 0;
             else PressEnterToPlayIteration++;

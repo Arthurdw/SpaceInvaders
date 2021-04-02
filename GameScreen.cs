@@ -28,6 +28,10 @@ namespace SpaceInvaders
         /// </summary>
         public static bool IsFirstInteraction = true;
         /// <summary>
+        /// Whether or not the game is currently paused.
+        /// </summary>
+        public static bool IsPaused = false;
+        /// <summary>
         /// The general  brush for the laser.
         /// </summary>
         public static Brush Br = new SolidBrush(Config.Colors.Accent);
@@ -62,21 +66,29 @@ namespace SpaceInvaders
 
             DrawLaser(g);
 
-            foreach (Action<Panel, Graphics> action in ActionBuffer)
-                action(pnl, g);
-
-            ActionBuffer = new List<Action<Panel, Graphics>>();
-
-            List<Entities.Bullet> removeBuffer = new List<Entities.Bullet>();
-
-            foreach (Entities.Bullet bullet in Bullets)
+            if (IsPaused)
             {
-                if (bullet.Y <= 0) removeBuffer.Add(bullet);
-                else bullet.PerformStep(g);
+                foreach (Entities.Bullet bullet in Bullets)
+                    bullet.Draw(g);
             }
+            else
+            {
+                foreach (Action<Panel, Graphics> action in ActionBuffer)
+                    action(pnl, g);
 
-            foreach (Entities.Bullet bullet in removeBuffer)
-                Bullets.Remove(bullet);
+                ActionBuffer = new List<Action<Panel, Graphics>>();
+
+                List<Entities.Bullet> removeBuffer = new List<Entities.Bullet>();
+
+                foreach (Entities.Bullet bullet in Bullets)
+                {
+                    if (bullet.Y <= 0) removeBuffer.Add(bullet);
+                    else bullet.PerformStep(g);
+                }
+
+                foreach (Entities.Bullet bullet in removeBuffer)
+                    Bullets.Remove(bullet);
+            }
         }
 
         /// <summary>
