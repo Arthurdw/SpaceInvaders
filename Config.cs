@@ -66,6 +66,7 @@ namespace SpaceInvaders
                 public static Color BackgroundColor = Color.FromArgb(50, Colors.Back);
 
                 public static string GoBackToMainScreenMessage = "Main screen";
+                public static string ResetGameMessage = "reset game";
                 public static string GoBackToGameMessage = "BACK";
                 public static string ExitGameMessage = "Exit";
             }

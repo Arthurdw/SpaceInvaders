@@ -109,5 +109,18 @@ namespace SpaceInvaders
         public static void Shoot()
             => Bullets.Add(new Entities.Bullet(CurrentBarrelMiddle, CurrentYLocation));
 
+        /// <summary>
+        /// Reset the game.
+        /// </summary>
+        /// <param name="game">The current game form</param>
+        public static void Reset(Game game)
+        {
+            IsPaused = false;
+            ActionBuffer = new List<Action<Panel, Graphics>>();
+            Bullets = new List<Entities.Bullet>();
+            game.Overlay = (_, __) => { };
+            EscapeMenu.HighlightedIndex = 0;
+        }
+
     }
 }

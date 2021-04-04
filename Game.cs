@@ -11,8 +11,8 @@ namespace SpaceInvaders
     public partial class Game : Form
     {
         private List<Keys> _currentPressed;
-        private Action<Panel, Graphics> _callback;
-        private Action<Panel, Graphics> _overlay;
+        public Action<Panel, Graphics> Callback;
+        public Action<Panel, Graphics> Overlay;
         private DateTime _lastShotFired;
         private DateTime _overlayCooldown;
 
@@ -28,8 +28,8 @@ namespace SpaceInvaders
 
             this.ForeColor = Config.Colors.Primary;
             this.BackColor = Config.Colors.Back;
-            this._callback = WelcomeScreen.Draw;
-            this._overlay = null;
+            this.Callback = WelcomeScreen.Draw;
+            this.Overlay = null;
             this._overlayCooldown = DateTime.MinValue;
             this._currentPressed = new List<Keys>();
             this._lastShotFired = DateTime.MinValue;
@@ -45,8 +45,8 @@ namespace SpaceInvaders
             e.Graphics.TextRenderingHint = TextRenderingHint.AntiAlias;
             e.Graphics.SmoothingMode = SmoothingMode.AntiAlias;
             this.HandleKeyEvents();
-            this._callback(pnl, e.Graphics);
-            _overlay?.Invoke(pnl, e.Graphics);
+            this.Callback(pnl, e.Graphics);
+            Overlay?.Invoke(pnl, e.Graphics);
         }
 
         private void HandleWindowContentLocation(object sender, EventArgs e)
@@ -64,9 +64,26 @@ namespace SpaceInvaders
 
         private void HandleFormKeydown(object sender, KeyEventArgs e)
         {
-            if (e.KeyCode == Keys.F11) this.HandleKeyEvent(e.KeyCode);
-            else if (!this._currentPressed.Contains(e.KeyCode)) 
-                this._currentPressed.Add(e.KeyCode);
+            // Handle some keys in here, to prevent repetitions
+            switch (e.KeyCode)
+            {
+                case Keys.F11:
+                case Keys.Up:
+                case Keys.Down:
+                case Keys.W:
+                case Keys.S:
+                    this.HandleKeyEvent(e.KeyCode);
+                    break;
+                case Keys.Enter:
+                    if (!GameScreen.IsPaused) goto default;
+                    EscapeMenu.Game = this;
+                    EscapeMenu.Items[EscapeMenu.HighlightedIndex].Item2();
+                    break;
+                default:
+                    if (!this._currentPressed.Contains(e.KeyCode))
+                        this._currentPressed.Add(e.KeyCode);
+                    break;
+            }
         }
 
         private void HandleFormKeyup(object sender, KeyEventArgs e)
@@ -110,8 +127,8 @@ namespace SpaceInvaders
                             GameScreen.IsPaused = !GameScreen.IsPaused;
 
                             // Can't use ternary here because of C# types... sad
-                            if (GameScreen.IsPaused) this._overlay = EscapeMenu.Draw;
-                            else this._overlay = null;
+                            if (GameScreen.IsPaused) this.Overlay = EscapeMenu.Draw;
+                            else this.Overlay = null;
 
                             this._overlayCooldown = dt;
                         }
@@ -126,7 +143,7 @@ namespace SpaceInvaders
                         if (!WelcomeScreen.ScreenPassed)
                         {
                             WelcomeScreen.ScreenPassed = true;
-                            this._callback = GameScreen.Draw;
+                            this.Callback = GameScreen.Draw;
                         }
                         else if (!GameScreen.IsPaused)
                         {
@@ -155,6 +172,16 @@ namespace SpaceInvaders
                             GameScreen.CurrentXLocation = pnl.Width - 10 - Entities.Size;
                         else GameScreen.CurrentXLocation += 10;
                     }
+                    break;
+                case Keys.W:
+                case Keys.Down:
+                    if (EscapeMenu.HighlightedIndex == EscapeMenu.Items.Length - 1) break;
+                    EscapeMenu.HighlightedIndex++;
+                    break;
+                case Keys.S:
+                case Keys.Up:
+                    if (EscapeMenu.HighlightedIndex == 0) break;
+                    EscapeMenu.HighlightedIndex--;
                     break;
             }
         }
