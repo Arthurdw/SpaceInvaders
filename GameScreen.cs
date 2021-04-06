@@ -86,17 +86,33 @@ namespace SpaceInvaders
                 ActionBuffer = new List<Action<Panel, Graphics>>();
 
                 List<Entities.Bullet> removeBuffer = new List<Entities.Bullet>();
+                List<Entities.Entity> removeEntitiesBuffer = new List<Entities.Entity>();
 
                 foreach (Entities.Bullet bullet in Bullets)
                 {
                     if (bullet.Y <= 0) removeBuffer.Add(bullet);
-                    else bullet.PerformStep(g);
+                    else
+                    {
+                        foreach (Entities.Entity entity in LivingEntities)
+                        {
+                            if (bullet.X >= entity.X && bullet.X <= entity.X + Entities.Size &&
+                                entity.Y < bullet.Y && entity.Y + Entities.Size > bullet.Y)
+                            {
+                                removeEntitiesBuffer.Add(entity);
+                                removeBuffer.Add(bullet);
+                            }
+                        }
+                        bullet.PerformStep(g);
+                    }
                 }
 
                 foreach (Entities.Bullet bullet in removeBuffer)
                     Bullets.Remove(bullet);
 
-                if (_entityAnimationIteration >= Speed * 2)
+                foreach (Entities.Entity entity in removeEntitiesBuffer)
+                    LivingEntities.Remove(entity);
+
+                if (_entityAnimationIteration >= Speed * 2 && LivingEntities.Count != 0)
                 {
                     if (_isGoingRight)
                     {

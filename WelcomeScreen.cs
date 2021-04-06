@@ -1,4 +1,5 @@
-﻿using System.Drawing;
+﻿using System;
+using System.Drawing;
 using System.Windows.Forms;
 
 namespace SpaceInvaders
@@ -29,6 +30,8 @@ namespace SpaceInvaders
         /// </summary>
         public static bool ScreenPassed;
 
+        public static int EntitiesIterationSpeed = 8;
+
         static WelcomeScreen()
         {
             EntitiesFirst = true;
@@ -40,7 +43,7 @@ namespace SpaceInvaders
         /// </summary>
         public static void Draw(Panel pnl, Graphics g)
         {
-            if (EntitiesIteration == 8)
+            if (EntitiesIteration == EntitiesIterationSpeed)
             {
                 EntitiesLeft += Entities.Size / 8;
                 if (EntitiesLeft >= pnl.Width / 10 - Entities.Size)

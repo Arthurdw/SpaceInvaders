@@ -96,7 +96,7 @@ namespace SpaceInvaders
             /// <summary>
             /// The horizontal location of the bullet.
             /// </summary>
-            private readonly int _x;
+            public int X;
             /// <summary>
             /// Whether or not the bullet was sent by the player or an enemy.
             /// </summary>
@@ -116,7 +116,7 @@ namespace SpaceInvaders
             /// <param name="byPlayer">Whether or not the bullet was sent by the player or an enemy.</param>
             public Bullet(int x, int y, bool byPlayer = true)
             {
-                this._x = x;
+                this.X = x;
                 this.Y = y;
                 this._iteration = 0;
                 this._byPlayer = byPlayer;
@@ -127,7 +127,7 @@ namespace SpaceInvaders
             /// </summary>
             public void Draw(Graphics g)
             {
-                if (_byPlayer) g.FillRectangle(new SolidBrush(Config.Colors.PrimaryDark), this._x, this.Y, Entities.Size / 10, Entities.Size / 2);
+                if (_byPlayer) g.FillRectangle(new SolidBrush(Config.Colors.PrimaryDark), this.X, this.Y, Entities.Size / 10, Entities.Size / 2);
                 else
                 {
                     // TODO IMPLEMENT ANIMATIONS FOR ENEMIES
@@ -140,8 +140,8 @@ namespace SpaceInvaders
 
                     g.FillRectangles(new SolidBrush(Config.Colors.PrimaryDark), new[]
                     {
-                        new RectangleF(this._x, this.Y, width, height),
-                        new RectangleF(this._x + (iterationCalcValue * height), this.Y + height, width, height)
+                        new RectangleF(this.X, this.Y, width, height),
+                        new RectangleF(this.X + (iterationCalcValue * height), this.Y + height, width, height)
                     });
                     _iteration++;
                 }
