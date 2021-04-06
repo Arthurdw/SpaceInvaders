@@ -32,7 +32,8 @@ namespace SpaceInvaders
             g.FillRectangle(Brush, 0, 0, pnl.Width, pnl.Height);
             g.DrawString(Config.Game.EscapeMenu.TopMessage, new Font(Config.FontFamily, (float) pnl.Height / 15), new SolidBrush(Config.Colors.Accent), new RectangleF(0, 0, pnl.Width, (float) pnl.Height / 5), Config.StringFormat);
 
-            Font fnt = new Font(Config.FontFamily, ((float) (pnl.Height - (pnl.Height / 15)) / (Items.Length + 2)) / 4);
+            float size = ((float) (pnl.Height - (pnl.Height / 15)) / (Items.Length + 2)) / 4;
+            Font fnt = new Font(Config.FontFamily, size);
             Brush br = new SolidBrush(Config.Colors.Primary);
             float startAt = (float) (pnl.Height * 0.25);
 
@@ -44,6 +45,12 @@ namespace SpaceInvaders
 
                 g.DrawString(msg, fnt, br, new RectangleF(0, yPos, pnl.Width, yPos + fnt.Size), Config.StringFormat);
             }
+
+            g.DrawString("Use the up/down or w/s\r\nkeys to select an item", new Font(Config.FontFamily, size / 2), br, new RectangleF(0, pnl.Height - size * 3 - (float) pnl.Height / 20, pnl.Width - (pnl.Width / 20), size * 3), new StringFormat
+            {
+                LineAlignment = StringAlignment.Center,
+                Alignment = StringAlignment.Far
+            });
         }
     }
 }

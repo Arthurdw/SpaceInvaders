@@ -54,7 +54,7 @@ namespace SpaceInvaders
             // TODO: Fix the panel height issue
             pnl.Width = pnl.Height = this.Width < this.Height ? this.Width : this.Height;
 
-            Entities.Size = pnl.Width / 12;
+            Entities.Size = pnl.Width / 17;
             
             pnl.Left = this.Width / 2 - pnl.Width / 2;
             pnl.Top = this.Height / 2 - pnl.Height / 2;
@@ -75,9 +75,23 @@ namespace SpaceInvaders
                     this.HandleKeyEvent(e.KeyCode);
                     break;
                 case Keys.Enter:
-                    if (!GameScreen.IsPaused) goto default;
+                    if (!GameScreen.IsPaused) goto case Keys.Space;
+
                     EscapeMenu.Game = this;
                     EscapeMenu.Items[EscapeMenu.HighlightedIndex].Item2();
+                    break;
+                case Keys.Space:
+                    if (!WelcomeScreen.ScreenPassed) goto default;
+                    else if (!GameScreen.IsPaused)
+                    {
+                        DateTime dt = DateTime.Now;
+                        if (!(this._currentPressed.Contains(Keys.Enter) || this._currentPressed.Contains(Keys.Space)) && (dt - this._lastShotFired).Milliseconds >= 50)
+                        {
+                            this._lastShotFired = dt;
+                            GameScreen.Shoot();
+                            this._currentPressed.Add(e.KeyCode);
+                        }
+                    }
                     break;
                 default:
                     if (!this._currentPressed.Contains(e.KeyCode))
@@ -121,7 +135,7 @@ namespace SpaceInvaders
 
                         DateTime dt = DateTime.Now;
                     
-                        if ((dt - this._overlayCooldown).Milliseconds >= 500)
+                        if ((dt - this._overlayCooldown).Milliseconds >= 100)
                         {
                             // this.ToggleScreen(false);
                             GameScreen.IsPaused = !GameScreen.IsPaused;
@@ -139,21 +153,10 @@ namespace SpaceInvaders
                     break;
                 case Keys.Space:
                 case Keys.Enter:
+                    if (!WelcomeScreen.ScreenPassed)
                     {
-                        if (!WelcomeScreen.ScreenPassed)
-                        {
-                            WelcomeScreen.ScreenPassed = true;
-                            this.Callback = GameScreen.Draw;
-                        }
-                        else if (!GameScreen.IsPaused)
-                        {
-                            DateTime dt = DateTime.Now;
-                            if ((dt - this._lastShotFired).Milliseconds >= 50)
-                            {
-                                this._lastShotFired = dt;
-                                GameScreen.Shoot();
-                            }
-                        }
+                        WelcomeScreen.ScreenPassed = true;
+                        this.Callback = GameScreen.Draw;
                     }
                     break;
                 case Keys.Left:
@@ -173,12 +176,12 @@ namespace SpaceInvaders
                         else GameScreen.CurrentXLocation += 10;
                     }
                     break;
-                case Keys.W:
+                case Keys.S:
                 case Keys.Down:
                     if (EscapeMenu.HighlightedIndex == EscapeMenu.Items.Length - 1) break;
                     EscapeMenu.HighlightedIndex++;
                     break;
-                case Keys.S:
+                case Keys.W:
                 case Keys.Up:
                     if (EscapeMenu.HighlightedIndex == 0) break;
                     EscapeMenu.HighlightedIndex--;

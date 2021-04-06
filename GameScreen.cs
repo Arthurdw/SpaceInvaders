@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Drawing;
+using System.Linq;
 using System.Windows.Forms;
 
 namespace SpaceInvaders
@@ -36,6 +37,9 @@ namespace SpaceInvaders
         /// </summary>
         public static Brush Br = new SolidBrush(Config.Colors.Accent);
 
+        private const int EntitiesPerRow = 11;
+        private static int _entityAnimationIteration = 0;
+
         /// <summary>
         /// All the actions that should be taken for the next draw.
         /// </summary>
@@ -44,6 +48,8 @@ namespace SpaceInvaders
         /// A list of all the bullets that are currently on screen.
         /// </summary>
         public static List<Entities.Bullet> Bullets = new List<Entities.Bullet>();
+
+        public static List<Entities.Entity> LivingEntities = new List<Entities.Entity>();
 
         /// <summary>
         /// Draws the GameScreen.
@@ -55,16 +61,15 @@ namespace SpaceInvaders
         /// </summary>
         public static void Draw(Panel pnl, Graphics g)
         {
-            if (IsFirstInteraction)
-            {
-                CurrentXLocation = pnl.Width / 2 - Entities.Size / 2;
-                IsFirstInteraction = false;
-            }
+            if (IsFirstInteraction) PerformStartup(pnl, g);
 
             CurrentYLocation = pnl.Height - 20 - Entities.Size;
             CurrentBarrelMiddle = CurrentXLocation + Entities.Size / 2 - (Entities.Size / 10) / 2;
 
             DrawLaser(g);
+
+            foreach (Entities.Entity entity in LivingEntities)
+                entity.Draw(g, _entityAnimationIteration <= 30);
 
             if (IsPaused)
             {
@@ -88,6 +93,51 @@ namespace SpaceInvaders
 
                 foreach (Entities.Bullet bullet in removeBuffer)
                     Bullets.Remove(bullet);
+
+                if (_entityAnimationIteration >= 60) _entityAnimationIteration = 0;
+                _entityAnimationIteration++;
+            }
+        }
+
+        private static void PerformStartup(Panel pnl, Graphics g)
+        {
+            EscapeMenu.HighlightedIndex = 0;
+            Bullets = new List<Entities.Bullet>();
+            ActionBuffer = new List<Action<Panel, Graphics>>();
+            CurrentXLocation = pnl.Width / 2 - Entities.Size / 2;
+            SpawnEntities(pnl);
+            IsFirstInteraction = false;
+        }
+
+        private static void SpawnEntities(Panel pnl)
+        {
+            (Entities.EntityType, int)[] entitiesConfig = new[]
+            {
+                (Entities.EntityType.Squid, 1),
+                (Entities.EntityType.Crab, 2),
+                (Entities.EntityType.Octopus, 2)
+            };
+
+            int startY = 50;
+            int startX = 10;
+            int row = 0;
+            int jumpSizeX = ((pnl.Width - startX * 2) / 11 - Entities.Size) / 2;
+            int jumpSizeY = Entities.Size / 3;
+
+            foreach ((int idx, Entities.EntityType entity, int rows) in entitiesConfig.Select((tuple, i) => (i, tuple.Item1, tuple.Item2)))
+            {
+                int curX = startX;
+                for (int i = 0; i < rows * EntitiesPerRow; i++)
+                {
+                    LivingEntities.Add(new Entities.Entity(curX + (Entities.Size + jumpSizeX) * i, startY +
+                        (Entities.Size + jumpSizeY) * (idx + row), entity));
+                    if (i == EntitiesPerRow - 1 && rows > 1)
+                    {
+                        row++;
+                        curX -= (Entities.Size + jumpSizeX) * (i + 1);
+                    }
+                }
+                
             }
         }
 
@@ -116,10 +166,8 @@ namespace SpaceInvaders
         public static void Reset(Game game)
         {
             IsPaused = false;
-            ActionBuffer = new List<Action<Panel, Graphics>>();
-            Bullets = new List<Entities.Bullet>();
             game.Overlay = (_, __) => { };
-            EscapeMenu.HighlightedIndex = 0;
+            IsFirstInteraction = true;
         }
 
     }

@@ -79,15 +79,6 @@ namespace SpaceInvaders
             }
 
             /// <summary>
-            /// Draw the entity, this will make use of the inner helper methods to check on which frame the animation is.
-            /// </summary>
-            public void Draw(Graphics graphics)
-            {
-                this.Draw(graphics, this._isFirst);
-                this._isFirst = !this._isFirst;
-            }
-
-            /// <summary>
             /// Draw the entity.
             /// This method requires you to specify if you want the first frame to be shown or the second.
             /// </summary>
@@ -122,6 +113,8 @@ namespace SpaceInvaders
             /// </summary>
             public static int StepSize = 20;
 
+            public static int AnimationSpeed = 10;
+
             /// <summary>
             /// Spawn a new bullet.
             /// </summary>
@@ -140,7 +133,26 @@ namespace SpaceInvaders
             /// Draw the current bullet to the screen.
             /// </summary>
             public void Draw(Graphics g)
-                => g.FillRectangle(new SolidBrush(Config.Colors.PrimaryDark), this._x, this.Y, Entities.Size / 10, Entities.Size / 2);
+            {
+                if (_byPlayer) g.FillRectangle(new SolidBrush(Config.Colors.PrimaryDark), this._x, this.Y, Entities.Size / 10, Entities.Size / 2);
+                else
+                {
+                    // TODO IMPLEMENT ANIMATIONS FOR ENEMIES
+                    float width = (float)Size / 10;
+                    float height = (float)Size / 8;
+
+                    int iterationCalcValue = _iteration <= AnimationSpeed ? 1 : 0;
+
+                    if (_iteration == AnimationSpeed * 2) _iteration = 0;
+
+                    g.FillRectangles(new SolidBrush(Config.Colors.PrimaryDark), new[]
+                    {
+                        new RectangleF(this._x, this.Y, width, height),
+                        new RectangleF(this._x + (iterationCalcValue * height), this.Y + height, width, height)
+                    });
+                    _iteration++;
+                }
+            }
 
             /// <summary>
             /// Perform a step with the bullet.
