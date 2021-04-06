@@ -114,12 +114,17 @@ namespace SpaceInvaders
 
                 if (_entityAnimationIteration >= Speed * 2 && LivingEntities.Count != 0)
                 {
+                    bool lastDirection = _isGoingRight;
+
                     _isGoingRight = _isGoingRight 
                         ? !(LivingEntities.Max(e => e.X) + Entities.Size / 12 >= pnl.Width - 20 - Entities.Size) 
                         : LivingEntities.Min(e => e.X) - Entities.Size / 12 <= 10;
 
                     foreach (Entities.Entity entity in LivingEntities)
-                        entity.X += (_isGoingRight ? 1 : -1) * Entities.Size / 2;
+                    {
+                        if (lastDirection != _isGoingRight) entity.Y += Entities.Size;
+                        else entity.X += (_isGoingRight ? 1 : -1) * Entities.Size / 2;
+                    }
 
                     _entityAnimationIteration = 0;
                 }
