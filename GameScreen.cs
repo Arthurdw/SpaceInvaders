@@ -38,7 +38,9 @@ namespace SpaceInvaders
         public static Brush Br = new SolidBrush(Config.Colors.Accent);
 
         private const int EntitiesPerRow = 11;
-        private static int _entityAnimationIteration = 0;
+        private static int _entityAnimationIteration;
+        private static bool _isGoingRight = true;
+        public static int Speed = 15;
 
         /// <summary>
         /// All the actions that should be taken for the next draw.
@@ -69,7 +71,7 @@ namespace SpaceInvaders
             DrawLaser(g);
 
             foreach (Entities.Entity entity in LivingEntities)
-                entity.Draw(g, _entityAnimationIteration <= 30);
+                entity.Draw(g, _entityAnimationIteration <= Speed);
 
             if (IsPaused)
             {
@@ -94,7 +96,24 @@ namespace SpaceInvaders
                 foreach (Entities.Bullet bullet in removeBuffer)
                     Bullets.Remove(bullet);
 
-                if (_entityAnimationIteration >= 60) _entityAnimationIteration = 0;
+                if (_entityAnimationIteration >= Speed * 2)
+                {
+                    if (_isGoingRight)
+                    {
+                        int max = LivingEntities.Max(entity => entity.X);
+                        if (max + Entities.Size / 12 >= pnl.Width - 20 - Entities.Size) _isGoingRight = false;
+                    }
+                    else
+                    {
+                        int min = LivingEntities.Min(entity => entity.X);
+                        if (min - Entities.Size / 12 <= 10) _isGoingRight = true;
+                    }
+
+                    foreach (Entities.Entity entity in LivingEntities)
+                        entity.X += _isGoingRight ? Entities.Size / 2 : -(Entities.Size / 2);
+
+                    _entityAnimationIteration = 0;
+                }
                 _entityAnimationIteration++;
             }
         }
@@ -111,6 +130,9 @@ namespace SpaceInvaders
 
         private static void SpawnEntities(Panel pnl)
         {
+            LivingEntities = new List<Entities.Entity>();
+            _isGoingRight = true;
+            _entityAnimationIteration = 0;
             (Entities.EntityType, int)[] entitiesConfig = new[]
             {
                 (Entities.EntityType.Squid, 1),
@@ -162,12 +184,12 @@ namespace SpaceInvaders
         /// <summary>
         /// Reset the game.
         /// </summary>
-        /// <param name="game">The current game form</param>
-        public static void Reset(Game game)
+        public static void Reset(Panel pnl, Game game)
         {
             IsPaused = false;
             game.Overlay = (_, __) => { };
             IsFirstInteraction = true;
+            SpawnEntities(pnl);
         }
 
     }

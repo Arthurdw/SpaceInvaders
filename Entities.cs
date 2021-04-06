@@ -26,24 +26,19 @@ namespace SpaceInvaders
             /// <summary>
             /// The entity its current horizontal location.
             /// </summary>
-            protected int X;
+            public int X;
             /// <summary>
             /// The entity its current vertical location.
             /// </summary>
-            protected int Y;
+            public int Y;
             /// <summary>
             /// The first frame for the animation.
             /// </summary>
-            protected Bitmap Shape;
+            protected Image Shape;
             /// <summary>
             /// The second frame for the animation.
             /// </summary>
-            protected Bitmap Shape2;
-
-            /// <summary>
-            /// Helper variable for the frame animations, to check whether or not the first frame should currently be shown.
-            /// </summary>
-            private bool _isFirst;
+            protected Image Shape2;
 
             /// <summary>
             /// Creates a new entity.
@@ -56,19 +51,17 @@ namespace SpaceInvaders
                 this.X = x;
                 this.Y = y;
                 string entityName = Enum.GetName(typeof(EntityType), entityType);
-                this.Shape = this.GetBitmap($"./assets/{entityName}.png");
-                this.Shape2 = this.GetBitmap($"./assets/{entityName}2.png");
-                this._isFirst = true;
+                this.Shape = Image.FromFile($"./assets/{entityName}.png");
+                this.Shape2 = Image.FromFile($"./assets/{entityName}2.png");
             }
 
             /// <summary>
             /// Get a bitmap image for an image path and change the size so it matches the entity size.
             /// </summary>
-            /// <param name="imgPath">The src location for the asset.</param>
+            /// <param name="img">The asset.</param>
             /// <returns>A fully functional bitmap, which is ready to get used.</returns>
-            public Bitmap GetBitmap(string imgPath)
+            public Bitmap GetBitmap(Image img)
             {
-                Image img = Image.FromFile(imgPath);
                 float multiplicationFactor = (float) Size / (img.Height > img.Width ? img.Height : img.Width);
 
                 Bitmap bm = new Bitmap(img, new Size(
@@ -83,7 +76,7 @@ namespace SpaceInvaders
             /// This method requires you to specify if you want the first frame to be shown or the second.
             /// </summary>
             public void Draw(Graphics graphics, bool first)
-                => graphics.DrawImage(first ? this.Shape : this.Shape2, this.X, this.Y);
+                => graphics.DrawImage(this.GetBitmap(first ? this.Shape : this.Shape2), this.X, this.Y);
         }
 
         /// <summary>

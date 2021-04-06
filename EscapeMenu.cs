@@ -8,16 +8,17 @@ namespace SpaceInvaders
     public static class EscapeMenu
     {
         public static Game Game;
+        public static Panel Pnl;
         public static Brush Brush = new SolidBrush(Config.Game.EscapeMenu.BackgroundColor);
         public static int HighlightedIndex;
         public static (string, Action)[] Items = {
             (Config.Game.EscapeMenu.GoBackToMainScreenMessage, () =>
             {
-                GameScreen.Reset(Game);
+                GameScreen.Reset(Pnl, Game);
                 WelcomeScreen.ScreenPassed = false;
                 Game.Callback = WelcomeScreen.Draw;
             }),
-            (Config.Game.EscapeMenu.ResetGameMessage, () => GameScreen.Reset(Game)),
+            (Config.Game.EscapeMenu.ResetGameMessage, () => GameScreen.Reset(Pnl, Game)),
             (Config.Game.EscapeMenu.GoBackToGameMessage, () =>
             {
                 Game.Overlay = (_, __) => { };
@@ -31,6 +32,7 @@ namespace SpaceInvaders
         {
             g.FillRectangle(Brush, 0, 0, pnl.Width, pnl.Height);
             g.DrawString(Config.Game.EscapeMenu.TopMessage, new Font(Config.FontFamily, (float) pnl.Height / 15), new SolidBrush(Config.Colors.Accent), new RectangleF(0, 0, pnl.Width, (float) pnl.Height / 5), Config.StringFormat);
+            Pnl = pnl;
 
             float size = ((float) (pnl.Height - (pnl.Height / 15)) / (Items.Length + 2)) / 4;
             Font fnt = new Font(Config.FontFamily, size);

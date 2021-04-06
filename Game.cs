@@ -54,7 +54,7 @@ namespace SpaceInvaders
             // TODO: Fix the panel height issue
             pnl.Width = pnl.Height = this.Width < this.Height ? this.Width : this.Height;
 
-            Entities.Size = pnl.Width / 17;
+            Entities.Size = pnl.Width / 20;
             
             pnl.Left = this.Width / 2 - pnl.Width / 2;
             pnl.Top = this.Height / 2 - pnl.Height / 2;
