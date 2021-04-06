@@ -85,12 +85,12 @@ namespace SpaceInvaders
 
                 ActionBuffer = new List<Action<Panel, Graphics>>();
 
-                List<Entities.Bullet> removeBuffer = new List<Entities.Bullet>();
+                List<Entities.Bullet> removeBulletBuffer = new List<Entities.Bullet>();
                 List<Entities.Entity> removeEntitiesBuffer = new List<Entities.Entity>();
 
                 foreach (Entities.Bullet bullet in Bullets)
                 {
-                    if (bullet.Y <= 0) removeBuffer.Add(bullet);
+                    if (bullet.Y <= 0) removeBulletBuffer.Add(bullet);
                     else
                     {
                         foreach (Entities.Entity entity in LivingEntities)
@@ -99,14 +99,14 @@ namespace SpaceInvaders
                                 entity.Y < bullet.Y && entity.Y + Entities.Size > bullet.Y)
                             {
                                 removeEntitiesBuffer.Add(entity);
-                                removeBuffer.Add(bullet);
+                                removeBulletBuffer.Add(bullet);
                             }
                         }
                         bullet.PerformStep(g);
                     }
                 }
 
-                foreach (Entities.Bullet bullet in removeBuffer)
+                foreach (Entities.Bullet bullet in removeBulletBuffer)
                     Bullets.Remove(bullet);
 
                 foreach (Entities.Entity entity in removeEntitiesBuffer)
@@ -114,19 +114,12 @@ namespace SpaceInvaders
 
                 if (_entityAnimationIteration >= Speed * 2 && LivingEntities.Count != 0)
                 {
-                    if (_isGoingRight)
-                    {
-                        int max = LivingEntities.Max(entity => entity.X);
-                        if (max + Entities.Size / 12 >= pnl.Width - 20 - Entities.Size) _isGoingRight = false;
-                    }
-                    else
-                    {
-                        int min = LivingEntities.Min(entity => entity.X);
-                        if (min - Entities.Size / 12 <= 10) _isGoingRight = true;
-                    }
+                    _isGoingRight = _isGoingRight 
+                        ? !(LivingEntities.Max(e => e.X) + Entities.Size / 12 >= pnl.Width - 20 - Entities.Size) 
+                        : LivingEntities.Min(e => e.X) - Entities.Size / 12 <= 10;
 
                     foreach (Entities.Entity entity in LivingEntities)
-                        entity.X += _isGoingRight ? Entities.Size / 2 : -(Entities.Size / 2);
+                        entity.X += (_isGoingRight ? 1 : -1) * Entities.Size / 2;
 
                     _entityAnimationIteration = 0;
                 }
