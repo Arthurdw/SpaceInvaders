@@ -40,9 +40,9 @@ namespace SpaceInvaders
         private const int EntitiesPerRow = 11;
         private static int _entityAnimationIteration;
         private static bool _isGoingRight = true;
-        public static int Speed = 15;
+        public static int Speed = 30;
         private static readonly Random Rn = new Random();
-        public static int Difficulty = 20;
+        public static int Difficulty = 30;
 
         /// <summary>
         /// All the actions that should be taken for the next draw.
@@ -105,6 +105,19 @@ namespace SpaceInvaders
                                 removeBulletBuffer.Add(bullet);
                             }
                         }
+
+                        foreach (Entities.Bullet blt in Bullets)
+                        {
+                            if (!bullet.ByPlayer || bullet.ByPlayer == blt.ByPlayer || removeBulletBuffer.Contains(blt)) continue;
+
+                            if (bullet.Y <= blt.Y + (float) Entities.Size / 10 * 7 &&
+                                bullet.X >= blt.X - (float)Entities.Size / 10 * 2 && bullet.X <= blt.X + (float) Entities.Size / 10 * 2)
+                            {
+                                removeBulletBuffer.Add(blt);
+                                removeBulletBuffer.Add(bullet);
+                            }
+                        }
+
                         bullet.PerformStep(g);
                     }
                 }
