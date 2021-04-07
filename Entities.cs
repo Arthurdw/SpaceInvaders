@@ -31,6 +31,8 @@ namespace SpaceInvaders
             /// The entity its current vertical location.
             /// </summary>
             public int Y;
+
+            public int Row;
             /// <summary>
             /// The first frame for the animation.
             /// </summary>
@@ -46,13 +48,14 @@ namespace SpaceInvaders
             /// <param name="x">The horizontal start location for the entity</param>
             /// <param name="y">The vertical start location for the entity.</param>
             /// <param name="entityType">The type of entity.</param>
-            public Entity(int x, int y, EntityType entityType)
+            public Entity(int x, int y, EntityType entityType, int row = 0)
             {
                 this.X = x;
                 this.Y = y;
                 string entityName = Enum.GetName(typeof(EntityType), entityType);
                 this.Shape = Image.FromFile($"./assets/{entityName}.png");
                 this.Shape2 = Image.FromFile($"./assets/{entityName}2.png");
+                this.Row = row;
             }
 
             /// <summary>
@@ -100,7 +103,7 @@ namespace SpaceInvaders
             /// <summary>
             /// Whether or not the bullet was sent by the player or an enemy.
             /// </summary>
-            private readonly bool _byPlayer;
+            public readonly bool ByPlayer;
             /// <summary>
             /// The size of the steps that the bullet takes, increase this to improve the speed of the bullets.
             /// </summary>
@@ -119,7 +122,7 @@ namespace SpaceInvaders
                 this.X = x;
                 this.Y = y;
                 this._iteration = 0;
-                this._byPlayer = byPlayer;
+                this.ByPlayer = byPlayer;
             }
 
             /// <summary>
@@ -127,7 +130,7 @@ namespace SpaceInvaders
             /// </summary>
             public void Draw(Graphics g)
             {
-                if (_byPlayer) g.FillRectangle(new SolidBrush(Config.Colors.PrimaryDark), this.X, this.Y, Entities.Size / 10, Entities.Size / 2);
+                if (ByPlayer) g.FillRectangle(new SolidBrush(Config.Colors.PrimaryDark), this.X, this.Y, Entities.Size / 10, Entities.Size / 2);
                 else
                 {
                     // TODO IMPLEMENT ANIMATIONS FOR ENEMIES
@@ -152,7 +155,7 @@ namespace SpaceInvaders
             /// </summary>
             public void PerformStep(Graphics g)
             {
-                this.Y += _byPlayer ? -StepSize : StepSize;
+                this.Y += ByPlayer ? -StepSize : StepSize / 10;
                 this.Draw(g);
             }
         }

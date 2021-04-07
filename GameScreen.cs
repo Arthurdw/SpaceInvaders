@@ -41,6 +41,8 @@ namespace SpaceInvaders
         private static int _entityAnimationIteration;
         private static bool _isGoingRight = true;
         public static int Speed = 15;
+        private static readonly Random Rn = new Random();
+        public static int Difficulty = 20;
 
         /// <summary>
         /// All the actions that should be taken for the next draw.
@@ -95,7 +97,8 @@ namespace SpaceInvaders
                     {
                         foreach (Entities.Entity entity in LivingEntities)
                         {
-                            if (bullet.X >= entity.X && bullet.X <= entity.X + Entities.Size &&
+                            if (bullet.ByPlayer &&
+                                bullet.X >= entity.X && bullet.X <= entity.X + Entities.Size &&
                                 entity.Y < bullet.Y && entity.Y + Entities.Size > bullet.Y)
                             {
                                 removeEntitiesBuffer.Add(entity);
@@ -114,6 +117,38 @@ namespace SpaceInvaders
 
                 if (_entityAnimationIteration >= Speed * 2 && LivingEntities.Count != 0)
                 {
+                    // We need to get the bottom entities so we can let them shoot.
+                    int maxRowCount = LivingEntities.Max(e => e.Row) + 1;
+                    List<Entities.Entity>[] entitiesSortedByRow = new List<Entities.Entity>[maxRowCount];
+                    
+                    foreach (Entities.Entity entity in LivingEntities)
+                    {
+                        if (entitiesSortedByRow[entity.Row] == null)
+                            entitiesSortedByRow[entity.Row] = new List<Entities.Entity>();
+                        entitiesSortedByRow[entity.Row].Add(entity);
+                    }
+
+                    List<Entities.Entity> bottomEntities = entitiesSortedByRow[maxRowCount - 1];
+                    for (int i = maxRowCount - 2; i >= 0; i--)
+                    {
+                        if (bottomEntities.Count == EntitiesPerRow) break;
+                        foreach (Entities.Entity entity in entitiesSortedByRow[i])
+                        {
+                            bool contains = false;
+                            foreach (Entities.Entity e in bottomEntities)
+                            {
+                                if (e.X == entity.X)
+                                {
+                                    contains = true;
+                                    break;
+                                }
+                            }
+
+                            if (!contains) bottomEntities.Add(entity);
+                        }
+                    }
+
+                    // Animation steps
                     bool lastDirection = _isGoingRight;
 
                     _isGoingRight = _isGoingRight 
@@ -124,6 +159,12 @@ namespace SpaceInvaders
                     {
                         if (lastDirection != _isGoingRight) entity.Y += Entities.Size;
                         else entity.X += (_isGoingRight ? 1 : -1) * Entities.Size / 2;
+                    }
+
+                    foreach (Entities.Entity entity in bottomEntities)
+                    {
+                        if (Rn.Next(0, Difficulty) == 0)
+                            Bullets.Add(new Entities.Bullet(entity.X + Entities.Size / 2, entity.Y + Entities.Size, false));
                     }
 
                     _entityAnimationIteration = 0;
@@ -159,6 +200,7 @@ namespace SpaceInvaders
             int row = 0;
             int jumpSizeX = ((pnl.Width - startX * 2) / 11 - Entities.Size) / 2;
             int jumpSizeY = Entities.Size / 3;
+            int currentRow = row;
 
             foreach ((int idx, Entities.EntityType entity, int rows) in entitiesConfig.Select((tuple, i) => (i, tuple.Item1, tuple.Item2)))
             {
@@ -166,14 +208,16 @@ namespace SpaceInvaders
                 for (int i = 0; i < rows * EntitiesPerRow; i++)
                 {
                     LivingEntities.Add(new Entities.Entity(curX + (Entities.Size + jumpSizeX) * i, startY +
-                        (Entities.Size + jumpSizeY) * (idx + row), entity));
+                        (Entities.Size + jumpSizeY) * (idx + row), entity, currentRow));
                     if (i == EntitiesPerRow - 1 && rows > 1)
                     {
                         row++;
                         curX -= (Entities.Size + jumpSizeX) * (i + 1);
+                        currentRow++;
                     }
                 }
-                
+
+                currentRow++;
             }
         }
 
