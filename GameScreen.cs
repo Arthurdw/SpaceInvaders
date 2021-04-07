@@ -65,7 +65,7 @@ namespace SpaceInvaders
         /// </summary>
         public static void Draw(Panel pnl, Graphics g)
         {
-            if (IsFirstInteraction) PerformStartup(pnl, g);
+            if (IsFirstInteraction) PerformStartup(pnl);
 
             CurrentYLocation = pnl.Height - 20 - Entities.Size;
             CurrentBarrelMiddle = CurrentXLocation + Entities.Size / 2 - (Entities.Size / 10) / 2;
@@ -92,7 +92,7 @@ namespace SpaceInvaders
 
                 foreach (Entities.Bullet bullet in Bullets)
                 {
-                    if (bullet.Y <= 0) removeBulletBuffer.Add(bullet);
+                    if (bullet.Y <= 0 || bullet.Y >= pnl.Height) removeBulletBuffer.Add(bullet);
                     else
                     {
                         foreach (Entities.Entity entity in LivingEntities)
@@ -132,19 +132,20 @@ namespace SpaceInvaders
                     for (int i = maxRowCount - 2; i >= 0; i--)
                     {
                         if (bottomEntities.Count == EntitiesPerRow) break;
-                        foreach (Entities.Entity entity in entitiesSortedByRow[i])
+                        for (int j = 0; j < entitiesSortedByRow[i]?.Count; j++)
                         {
+                            if (entitiesSortedByRow[i][j] == null) continue;
                             bool contains = false;
                             foreach (Entities.Entity e in bottomEntities)
                             {
-                                if (e.X == entity.X)
+                                if (e.X == entitiesSortedByRow[i][j].X)
                                 {
                                     contains = true;
                                     break;
                                 }
                             }
 
-                            if (!contains) bottomEntities.Add(entity);
+                            if (!contains) bottomEntities.Add(entitiesSortedByRow[i][j]);
                         }
                     }
 
@@ -173,7 +174,7 @@ namespace SpaceInvaders
             }
         }
 
-        private static void PerformStartup(Panel pnl, Graphics g)
+        private static void PerformStartup(Panel pnl)
         {
             EscapeMenu.HighlightedIndex = 0;
             Bullets = new List<Entities.Bullet>();
@@ -188,8 +189,7 @@ namespace SpaceInvaders
             LivingEntities = new List<Entities.Entity>();
             _isGoingRight = true;
             _entityAnimationIteration = 0;
-            (Entities.EntityType, int)[] entitiesConfig = new[]
-            {
+            (Entities.EntityType, int)[] entitiesConfig = {
                 (Entities.EntityType.Squid, 1),
                 (Entities.EntityType.Crab, 2),
                 (Entities.EntityType.Octopus, 2)

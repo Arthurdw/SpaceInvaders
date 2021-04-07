@@ -96,6 +96,8 @@ namespace SpaceInvaders
             /// The current frame iteration for the bullet animations.
             /// </summary>
             private int _iteration;
+
+            private int _subIteration;
             /// <summary>
             /// The horizontal location of the bullet.
             /// </summary>
@@ -123,6 +125,7 @@ namespace SpaceInvaders
                 this.Y = y;
                 this._iteration = 0;
                 this.ByPlayer = byPlayer;
+                this._subIteration = 0;
             }
 
             /// <summary>
@@ -130,24 +133,39 @@ namespace SpaceInvaders
             /// </summary>
             public void Draw(Graphics g)
             {
-                if (ByPlayer) g.FillRectangle(new SolidBrush(Config.Colors.PrimaryDark), this.X, this.Y, Entities.Size / 10, Entities.Size / 2);
-                else
-                {
-                    // TODO IMPLEMENT ANIMATIONS FOR ENEMIES
+                // TODO: Fix weird animation bugg
+                RectangleF[] shape; 
+                if (_iteration == AnimationSpeed * 2) _iteration = 0;
+
+                if (ByPlayer) shape = new[] {new RectangleF(this.X, this.Y, (float) Size / 10, (float) Size / 2)};
+                else {
                     float width = (float)Size / 10;
                     float height = (float)Size / 8;
 
-                    int iterationCalcValue = _iteration <= AnimationSpeed ? 1 : 0;
+                    float p = (float) AnimationSpeed / 4;
+                    int animationStartValue = _iteration < p * 2
+                        ? _iteration < p ? 0 : 1
+                        : _iteration > p * 3 ? 2 : 3;
 
-                    if (_iteration == AnimationSpeed * 2) _iteration = 0;
+                    shape = new RectangleF[7];
 
-                    g.FillRectangles(new SolidBrush(Config.Colors.PrimaryDark), new[]
+                    for (int i = animationStartValue; i < animationStartValue + 7; i++)
                     {
-                        new RectangleF(this.X, this.Y, width, height),
-                        new RectangleF(this.X + (iterationCalcValue * height), this.Y + height, width, height)
-                    });
-                    _iteration++;
+                        int mod = i % 4;
+                        shape[i - animationStartValue] = new RectangleF(this.X + (mod == 0 ? -width : ((mod == 1 || mod == 3) ? 0 : width)), 
+                            this.Y + height * (i - animationStartValue), width, height);
+                    }
+
+                    _subIteration++;
+                    
+                    if (_subIteration == 3)
+                    {
+                        if (!GameScreen.IsPaused) _iteration++;
+                        _subIteration = 0;
+                    }
                 }
+
+                g.FillRectangles(new SolidBrush(Config.Colors.PrimaryDark), shape);
             }
 
             /// <summary>
