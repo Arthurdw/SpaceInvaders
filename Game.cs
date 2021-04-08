@@ -37,7 +37,7 @@ namespace SpaceInvaders
 
             typeof(Panel).InvokeMember("DoubleBuffered",
                 BindingFlags.SetProperty | BindingFlags.Instance | BindingFlags.NonPublic,
-                null, pnl, new object[] {true});
+                null, pnl, new object[] { true });
         }
 
         private void DrawPanel(object sender, PaintEventArgs e)
@@ -46,6 +46,11 @@ namespace SpaceInvaders
             e.Graphics.SmoothingMode = SmoothingMode.AntiAlias;
             this.HandleKeyEvents();
             this.Callback(pnl, e.Graphics);
+            if (Overlay == null && GameOverMenu.Enabled)
+            {
+                GameScreen.IsPaused = true;
+                Overlay = GameOverMenu.Draw;
+            }
             Overlay?.Invoke(pnl, e.Graphics);
         }
 
@@ -55,7 +60,7 @@ namespace SpaceInvaders
             pnl.Width = pnl.Height = this.Width < this.Height ? this.Width : this.Height;
 
             Entities.Size = pnl.Width / 20;
-            
+
             pnl.Left = this.Width / 2 - pnl.Width / 2;
             pnl.Top = this.Height / 2 - pnl.Height / 2;
 
@@ -74,12 +79,14 @@ namespace SpaceInvaders
                 case Keys.S:
                     this.HandleKeyEvent(e.KeyCode);
                     break;
+
                 case Keys.Enter:
                     if (!GameScreen.IsPaused) goto case Keys.Space;
 
                     EscapeMenu.Game = this;
                     EscapeMenu.Items[EscapeMenu.HighlightedIndex].Item2();
                     break;
+
                 case Keys.Space:
                     if (!WelcomeScreen.ScreenPassed) goto default;
                     else if (!GameScreen.IsPaused)
@@ -93,6 +100,7 @@ namespace SpaceInvaders
                         }
                     }
                     break;
+
                 default:
 
                     if (!this._currentPressed.Contains(e.KeyCode))
@@ -127,31 +135,33 @@ namespace SpaceInvaders
             switch (key)
             {
                 case Keys.Escape:
+                {
+                    if (!WelcomeScreen.ScreenPassed)
                     {
-                        if (!WelcomeScreen.ScreenPassed)
-                        {
-                            this.ToggleScreen(false);
-                            break;
-                        }
-
-                        DateTime dt = DateTime.Now;
-                    
-                        if ((dt - this._overlayCooldown).Milliseconds >= 100)
-                        {
-                            // this.ToggleScreen(false);
-                            GameScreen.IsPaused = !GameScreen.IsPaused;
-
-                            // Can't use ternary here because of C# types... sad
-                            if (GameScreen.IsPaused) this.Overlay = EscapeMenu.Draw;
-                            else this.Overlay = null;
-
-                            this._overlayCooldown = dt;
-                        }
+                        this.ToggleScreen(false);
+                        break;
                     }
-                    break;
+
+                    DateTime dt = DateTime.Now;
+
+                    if ((dt - this._overlayCooldown).Milliseconds >= 100 && !GameOverMenu.Enabled)
+                    {
+                        // this.ToggleScreen(false);
+                        GameScreen.IsPaused = !GameScreen.IsPaused;
+
+                        // Can't use ternary here because of C# types... sad
+                        if (GameScreen.IsPaused) this.Overlay = EscapeMenu.Draw;
+                        else this.Overlay = null;
+
+                        this._overlayCooldown = dt;
+                    }
+                }
+                break;
+
                 case Keys.F11:
                     this.ToggleScreen(this.FormBorderStyle != FormBorderStyle.None);
                     break;
+
                 case Keys.Space:
                 case Keys.Enter:
                     if (!WelcomeScreen.ScreenPassed)
@@ -160,6 +170,7 @@ namespace SpaceInvaders
                         this.Callback = GameScreen.Draw;
                     }
                     break;
+
                 case Keys.Left:
                 case Keys.A:
                     if (!GameScreen.IsPaused)
@@ -168,6 +179,7 @@ namespace SpaceInvaders
                         else GameScreen.CurrentXLocation -= 10;
                     }
                     break;
+
                 case Keys.Right:
                 case Keys.D:
                     if (!GameScreen.IsPaused)
@@ -177,11 +189,13 @@ namespace SpaceInvaders
                         else GameScreen.CurrentXLocation += 10;
                     }
                     break;
+
                 case Keys.S:
                 case Keys.Down:
                     if (EscapeMenu.HighlightedIndex == EscapeMenu.Items.Length - 1) break;
                     EscapeMenu.HighlightedIndex++;
                     break;
+
                 case Keys.W:
                 case Keys.Up:
                     if (EscapeMenu.HighlightedIndex == 0) break;

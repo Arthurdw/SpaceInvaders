@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Drawing;
+using System.Drawing.Drawing2D;
 using System.Linq;
 using System.Windows.Forms;
 
@@ -15,23 +16,28 @@ namespace SpaceInvaders
         /// The current Y location for the laser.
         /// </summary>
         public static int CurrentYLocation;
+
         /// <summary>
         /// The current X location for the laser.
         /// </summary>
         public static int CurrentXLocation;
+
         /// <summary>
         /// The current X location for the barrel middle.
         /// </summary>
         public static int CurrentBarrelMiddle;
+
         /// <summary>
         /// Whether or not the client has already moved the laser.
         /// This when its the first interaction the laser location gets calculated.
         /// </summary>
         public static bool IsFirstInteraction = true;
+
         /// <summary>
         /// Whether or not the game is currently paused.
         /// </summary>
         public static bool IsPaused = false;
+
         /// <summary>
         /// The general  brush for the laser.
         /// </summary>
@@ -48,6 +54,7 @@ namespace SpaceInvaders
         /// All the actions that should be taken for the next draw.
         /// </summary>
         public static List<Action<Panel, Graphics>> ActionBuffer = new List<Action<Panel, Graphics>>();
+
         /// <summary>
         /// A list of all the bullets that are currently on screen.
         /// </summary>
@@ -106,15 +113,31 @@ namespace SpaceInvaders
                             }
                         }
 
-                        foreach (Entities.Bullet blt in Bullets)
-                        {
-                            if (!bullet.ByPlayer || bullet.ByPlayer == blt.ByPlayer || removeBulletBuffer.Contains(blt)) continue;
+                        if (removeBulletBuffer.Contains(bullet)) continue;
 
-                            if (bullet.Y <= blt.Y + (float) Entities.Size / 10 * 7 &&
-                                bullet.X >= blt.X - (float)Entities.Size / 10 * 2 && bullet.X <= blt.X + (float) Entities.Size / 10 * 2)
+                        if (!bullet.ByPlayer)
+                        {
+                            if (bullet.X + (float)Entities.Size / 10 * 2 >= CurrentXLocation &&
+                                bullet.X - (float)Entities.Size / 10 * 2 <= CurrentXLocation + Entities.Size &&
+                                bullet.Y + (float)Entities.Size / 10 * 9 >= CurrentYLocation + Entities.Size / 2 &&
+                                bullet.Y <= CurrentYLocation + Entities.Size)
                             {
-                                removeBulletBuffer.Add(blt);
                                 removeBulletBuffer.Add(bullet);
+                                GameOverMenu.Enabled = true;
+                            }
+                        }
+                        else
+                        {
+                            foreach (Entities.Bullet blt in Bullets)
+                            {
+                                if (blt.ByPlayer || removeBulletBuffer.Contains(blt)) continue;
+
+                                if (bullet.Y <= blt.Y + (float)Entities.Size / 10 * 9 &&
+                                    bullet.X >= blt.X - (float)Entities.Size / 10 * 2 && bullet.X <= blt.X + (float)Entities.Size / 10 * 2)
+                                {
+                                    removeBulletBuffer.Add(blt);
+                                    removeBulletBuffer.Add(bullet);
+                                }
                             }
                         }
 
@@ -133,7 +156,7 @@ namespace SpaceInvaders
                     // We need to get the bottom entities so we can let them shoot.
                     int maxRowCount = LivingEntities.Max(e => e.Row) + 1;
                     List<Entities.Entity>[] entitiesSortedByRow = new List<Entities.Entity>[maxRowCount];
-                    
+
                     foreach (Entities.Entity entity in LivingEntities)
                     {
                         if (entitiesSortedByRow[entity.Row] == null)
@@ -165,8 +188,8 @@ namespace SpaceInvaders
                     // Animation steps
                     bool lastDirection = _isGoingRight;
 
-                    _isGoingRight = _isGoingRight 
-                        ? !(LivingEntities.Max(e => e.X) + Entities.Size / 12 >= pnl.Width - 20 - Entities.Size) 
+                    _isGoingRight = _isGoingRight
+                        ? !(LivingEntities.Max(e => e.X) + Entities.Size / 12 >= pnl.Width - 20 - Entities.Size)
                         : LivingEntities.Min(e => e.X) - Entities.Size / 12 <= 10;
 
                     foreach (Entities.Entity entity in LivingEntities)
@@ -262,6 +285,5 @@ namespace SpaceInvaders
             IsFirstInteraction = true;
             SpawnEntities(pnl);
         }
-
     }
 }

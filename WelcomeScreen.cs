@@ -12,18 +12,22 @@ namespace SpaceInvaders
         /// The current amount of pixels the moving entities are currently at. (horizontally)
         /// </summary>
         public static int EntitiesLeft;
+
         /// <summary>
         /// Whether or not the entities animation is currently the first frame.
         /// </summary>
         public static bool EntitiesFirst;
+
         /// <summary>
         /// The current iteration (amount of times the screen has updated).
         /// </summary>
         public static int EntitiesIteration;
+
         /// <summary>
         /// A separate iteration count for the `Press enter/space to play` message. Same principle as the <see cref="EntitiesIteration"/>
         /// </summary>
         public static int PressEnterToPlayIteration;
+
         /// <summary>
         /// Whether or not the welcome screen has passed.
         /// </summary>
@@ -51,7 +55,7 @@ namespace SpaceInvaders
                 EntitiesFirst = !EntitiesFirst;
                 EntitiesIteration = 0;
             }
-            
+
             for (int i = 0; i < 11; i++)
             {
                 int x = (pnl.Width / 10 - Entities.Size) * i + Entities.Size * i;

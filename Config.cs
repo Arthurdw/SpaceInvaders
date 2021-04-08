@@ -13,6 +13,7 @@ namespace SpaceInvaders
         /// The font that should be used throughout the game.
         /// </summary>
         public static Font Font;
+
         /// <summary>
         /// The font family of the font. (<see cref="Font"/>)
         /// </summary>
@@ -64,6 +65,7 @@ namespace SpaceInvaders
             {
                 public static string TopMessage = "Paused - Menu";
                 public static Color BackgroundColor = Color.FromArgb(50, Colors.Back);
+                public static Brush Brush = new SolidBrush(BackgroundColor);
 
                 public static string GoBackToMainScreenMessage = "Main screen";
                 public static string ResetGameMessage = "reset game";
