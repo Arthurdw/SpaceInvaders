@@ -1,7 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Drawing;
-using System.Drawing.Drawing2D;
 using System.Linq;
 using System.Windows.Forms;
 
@@ -48,7 +47,8 @@ namespace SpaceInvaders
         private static bool _isGoingRight = true;
         public static int Speed => LivingEntities.Count;
         private static readonly Random Rn = new Random();
-        public static int Difficulty = 30;
+        // public static int Difficulty = 30;
+        public static int Difficulty = 5;
 
         /// <summary>
         /// All the actions that should be taken for the next draw.
@@ -61,6 +61,7 @@ namespace SpaceInvaders
         public static List<Entities.Bullet> Bullets = new List<Entities.Bullet>();
 
         public static List<Entities.Entity> LivingEntities = new List<Entities.Entity>();
+        public static List<Entities.HealthBox> HealthBoxes = new List<Entities.HealthBox>();
 
         /// <summary>
         /// Draws the GameScreen.
@@ -81,6 +82,9 @@ namespace SpaceInvaders
 
             foreach (Entities.Entity entity in LivingEntities)
                 entity.Draw(g, _entityAnimationIteration <= Speed);
+
+            foreach (Entities.HealthBox box in HealthBoxes)
+                box.Draw(g);
 
             if (IsPaused)
             {
@@ -113,13 +117,50 @@ namespace SpaceInvaders
                             }
                         }
 
+                        // (float)Size / 10, (float)Size / 2)
+                        float bulletRight = bullet.X + (float)Entities.Size / 10 * (bullet.ByPlayer ? 1 : 2);
+                        float bulletLeft = bullet.X - (float)Entities.Size / 10 * (bullet.ByPlayer ? 1 : 2);
+                        float bulletBottom = bullet.Y + (bullet.ByPlayer ? (float) Entities.Size / 2 : (float)Entities.Size / 10 * 9);
+
+                        if (!removeBulletBuffer.Contains(bullet))
+                        {
+                            foreach (Entities.HealthBox box in HealthBoxes)
+                            {
+                                if (bulletRight >= box.Rect.Left &&
+                                    bulletLeft <= box.Rect.Right &&
+                                    bulletBottom >= box.Rect.Top &&
+                                    bullet.Y <= box.Rect.Bottom)
+                                {
+                                    bool collision = true;
+                                    foreach (Rectangle rectangle in box.ShotsTaken)
+                                    {
+                                        if (bulletLeft >= rectangle.Left &&
+                                            bulletRight <= rectangle.Right &&
+                                            (bullet.ByPlayer ? bullet.Y >= rectangle.Top : bulletBottom <= rectangle.Bottom))
+                                            collision = false;
+                                    }
+
+                                    if (collision)
+                                    {
+                                        box.ShotsTaken.Add(new Rectangle(
+                                            bullet.X - (int)((bulletRight - bullet.X) * 2.5) / 2,
+                                            bullet.Y + (bullet.ByPlayer ? -1 : 1) * (int)(bulletBottom - bullet.Y) - 6,
+                                            (int)(bulletRight - bullet.X) * 3,
+                                            (int)((bulletBottom - bullet.Y) * 1.25) + 12));
+                                        removeBulletBuffer.Add(bullet);
+                                        break;
+                                    }
+                                }
+                            }
+                        }
+
                         if (removeBulletBuffer.Contains(bullet)) continue;
 
                         if (!bullet.ByPlayer)
                         {
-                            if (bullet.X + (float)Entities.Size / 10 * 2 >= CurrentXLocation &&
-                                bullet.X - (float)Entities.Size / 10 * 2 <= CurrentXLocation + Entities.Size &&
-                                bullet.Y + (float)Entities.Size / 10 * 9 >= CurrentYLocation + Entities.Size / 2 &&
+                            if (bulletRight >= CurrentXLocation &&
+                                bulletLeft <= CurrentXLocation + Entities.Size &&
+                                bulletBottom >= CurrentYLocation + Entities.Size / 2 &&
                                 bullet.Y <= CurrentYLocation + Entities.Size)
                             {
                                 removeBulletBuffer.Add(bullet);
@@ -223,6 +264,8 @@ namespace SpaceInvaders
         private static void SpawnEntities(Panel pnl)
         {
             LivingEntities = new List<Entities.Entity>();
+            HealthBoxes = new List<Entities.HealthBox>();
+
             _isGoingRight = true;
             _entityAnimationIteration = 0;
             (Entities.EntityType, int)[] entitiesConfig = {
@@ -255,6 +298,13 @@ namespace SpaceInvaders
 
                 currentRow++;
             }
+
+            for (int i = 0; i < 4; i++)
+                HealthBoxes.Add(new Entities.HealthBox(
+                    (pnl.Width / 9) * (i + 1) + pnl.Width / 9 * i,
+                    pnl.Height - pnl.Height / 8 - Entities.Size * 2,
+                    pnl.Width / 9,
+                    pnl.Width / 8));
         }
 
         /// <summary>
@@ -262,7 +312,7 @@ namespace SpaceInvaders
         /// </summary>
         private static void DrawLaser(Graphics g)
         {
-            g.FillRectangles(Br, new []
+            g.FillRectangles(Br, new[]
             {
                 new Rectangle(CurrentBarrelMiddle, CurrentYLocation + Entities.Size / 5, Entities.Size / 10, Entities.Size / 2),
                 new Rectangle(CurrentXLocation, CurrentYLocation + Entities.Size / 2, Entities.Size, Entities.Size / 2)

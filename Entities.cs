@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Drawing;
 
 namespace SpaceInvaders
@@ -182,6 +183,28 @@ namespace SpaceInvaders
             {
                 this.Y += ByPlayer ? -StepSize : StepSize / 10;
                 this.Draw(g);
+            }
+        }
+
+        public class HealthBox
+        {
+            public static int TotalHealth;
+            public Rectangle Rect;
+            public List<Rectangle> ShotsTaken = new List<Rectangle>();
+
+            public HealthBox(int x, int y, int width, int height)
+            {
+                this.Rect = new Rectangle(x, y, width, height);
+            }
+
+            public void Draw(Graphics g)
+            {
+                g.FillRectangle(new SolidBrush(Config.Colors.Accent), Rect);
+
+                // merge shotstaken
+                Brush br = new SolidBrush(Config.Colors.PrimaryDarkest);
+                foreach (Rectangle rectangle in ShotsTaken)
+                    g.FillRectangle(br, rectangle);
             }
         }
     }
