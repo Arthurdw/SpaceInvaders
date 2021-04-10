@@ -61,7 +61,7 @@ namespace SpaceInvaders
         public static List<Entities.Bullet> Bullets = new List<Entities.Bullet>();
 
         public static List<Entities.Entity> LivingEntities = new List<Entities.Entity>();
-        public static List<Entities.HealthBox> HealthBoxes = new List<Entities.HealthBox>();
+        public static List<Entities.Shield> HealthBoxes = new List<Entities.Shield>();
 
         /// <summary>
         /// Draws the GameScreen.
@@ -83,7 +83,7 @@ namespace SpaceInvaders
             foreach (Entities.Entity entity in LivingEntities)
                 entity.Draw(g, _entityAnimationIteration <= Speed);
 
-            foreach (Entities.HealthBox box in HealthBoxes)
+            foreach (Entities.Shield box in HealthBoxes)
                 box.Draw(g);
 
             if (IsPaused)
@@ -124,7 +124,7 @@ namespace SpaceInvaders
 
                         if (!removeBulletBuffer.Contains(bullet))
                         {
-                            foreach (Entities.HealthBox box in HealthBoxes)
+                            foreach (Entities.Shield box in HealthBoxes)
                             {
                                 if (bulletRight >= box.Rect.Left &&
                                     bulletLeft <= box.Rect.Right &&
@@ -264,7 +264,7 @@ namespace SpaceInvaders
         private static void SpawnEntities(Panel pnl)
         {
             LivingEntities = new List<Entities.Entity>();
-            HealthBoxes = new List<Entities.HealthBox>();
+            HealthBoxes = new List<Entities.Shield>();
 
             _isGoingRight = true;
             _entityAnimationIteration = 0;
@@ -300,7 +300,7 @@ namespace SpaceInvaders
             }
 
             for (int i = 0; i < 4; i++)
-                HealthBoxes.Add(new Entities.HealthBox(
+                HealthBoxes.Add(new Entities.Shield(
                     (pnl.Width / 9) * (i + 1) + pnl.Width / 9 * i,
                     pnl.Height - pnl.Height / 8 - Entities.Size * 2,
                     pnl.Width / 9,

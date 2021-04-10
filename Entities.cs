@@ -186,13 +186,12 @@ namespace SpaceInvaders
             }
         }
 
-        public class HealthBox
+        public class Shield
         {
-            public static int TotalHealth;
             public Rectangle Rect;
             public List<Rectangle> ShotsTaken = new List<Rectangle>();
 
-            public HealthBox(int x, int y, int width, int height)
+            public Shield(int x, int y, int width, int height)
             {
                 this.Rect = new Rectangle(x, y, width, height);
             }
