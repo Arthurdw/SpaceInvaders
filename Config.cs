@@ -71,6 +71,12 @@ namespace SpaceInvaders
                 public static string GoBackToGameMessage = "BACK";
                 public static string ExitGameMessage = "Exit";
             }
+
+            public static class GameOverMenu
+            {
+                public static string GameOverMessage = "GAME OVER";
+                public static string GoHomeMessage = "Press space/enter to go back home";
+            }
         }
     }
 }

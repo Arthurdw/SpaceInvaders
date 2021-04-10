@@ -98,7 +98,8 @@ namespace SpaceInvaders
                             GameScreen.Shoot();
                             this._currentPressed.Add(e.KeyCode);
                         }
-                    } else if (GameOverMenu.Enabled)
+                    }
+                    else if (GameOverMenu.Enabled)
                     {
                         GameOverMenu.Enabled = false;
                         GameScreen.Reset(pnl, this);
