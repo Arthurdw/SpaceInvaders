@@ -46,7 +46,7 @@ namespace SpaceInvaders
         private const int EntitiesPerRow = 11;
         private static int _entityAnimationIteration;
         private static bool _isGoingRight = true;
-        public static int Speed = 30;
+        public static int Speed => LivingEntities.Count;
         private static readonly Random Rn = new Random();
         public static int Difficulty = 30;
 
