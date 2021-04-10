@@ -12,7 +12,7 @@ namespace SpaceInvaders
         /// <summary>
         /// The font that should be used throughout the game.
         /// </summary>
-        public static Font Font;
+        public static Font Font => new Font(FontFamily, (float)Entities.Size / 2);
 
         /// <summary>
         /// The font family of the font. (<see cref="Font"/>)
@@ -35,7 +35,6 @@ namespace SpaceInvaders
             pfc.AddMemoryFont(data, fontLength);
 
             FontFamily = pfc.Families[0];
-            Font = new Font(FontFamily, 24);
         }
 
         /// <summary>

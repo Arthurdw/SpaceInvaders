@@ -81,7 +81,7 @@ namespace SpaceInvaders
                     break;
 
                 case Keys.Enter:
-                    if (!GameScreen.IsPaused) goto case Keys.Space;
+                    if (!GameScreen.IsPaused || GameOverMenu.Enabled) goto case Keys.Space;
 
                     EscapeMenu.Game = this;
                     EscapeMenu.Items[EscapeMenu.HighlightedIndex].Item2();
@@ -98,6 +98,13 @@ namespace SpaceInvaders
                             GameScreen.Shoot();
                             this._currentPressed.Add(e.KeyCode);
                         }
+                    } else if (GameOverMenu.Enabled)
+                    {
+                        GameOverMenu.Enabled = false;
+                        GameScreen.Reset(pnl, this);
+                        WelcomeScreen.ScreenPassed = false;
+                        this.Callback = WelcomeScreen.Draw;
+                        this.Overlay = null;
                     }
                     break;
 
