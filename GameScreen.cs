@@ -47,6 +47,7 @@ namespace SpaceInvaders
         private static bool _isGoingRight = true;
         public static int Speed => LivingEntities.Count;
         private static readonly Random Rn = new Random();
+        public static int Score = 0;
 
         // public static int Difficulty = 30;
         public static int Difficulty = 30;
@@ -107,15 +108,10 @@ namespace SpaceInvaders
                     if (bullet.Y <= 0 || bullet.Y >= pnl.Height) removeBulletBuffer.Add(bullet);
                     else
                     {
-                        foreach (Entities.Entity entity in LivingEntities)
+                        foreach (Entities.Entity entity in LivingEntities.Where(entity => bullet.ByPlayer && bullet.X >= entity.X && bullet.X <= entity.X + Entities.Size && entity.Y < bullet.Y && entity.Y + Entities.Size > bullet.Y))
                         {
-                            if (bullet.ByPlayer &&
-                                bullet.X >= entity.X && bullet.X <= entity.X + Entities.Size &&
-                                entity.Y < bullet.Y && entity.Y + Entities.Size > bullet.Y)
-                            {
-                                removeEntitiesBuffer.Add(entity);
-                                removeBulletBuffer.Add(bullet);
-                            }
+                            removeEntitiesBuffer.Add(entity);
+                            removeBulletBuffer.Add(bullet);
                         }
 
                         // (float)Size / 10, (float)Size / 2)
@@ -127,31 +123,22 @@ namespace SpaceInvaders
                         {
                             foreach (Entities.Shield box in HealthBoxes)
                             {
-                                if (bulletRight >= box.Rect.Left &&
-                                    bulletLeft <= box.Rect.Right &&
-                                    bulletBottom >= box.Rect.Top &&
-                                    bullet.Y <= box.Rect.Bottom)
-                                {
-                                    bool collision = true;
-                                    foreach (Rectangle rectangle in box.ShotsTaken)
-                                    {
-                                        if (bulletLeft >= rectangle.Left &&
-                                            bulletRight <= rectangle.Right &&
-                                            (bullet.ByPlayer ? bullet.Y >= rectangle.Top : bulletBottom <= rectangle.Bottom))
-                                            collision = false;
-                                    }
+                                if (!(bulletRight >= box.Rect.Left) || !(bulletLeft <= box.Rect.Right) ||
+                                    !(bulletBottom >= box.Rect.Top) || bullet.Y > box.Rect.Bottom) continue;
+                                bool collision = true;
+                                foreach (var _ in box.ShotsTaken.Where(rectangle => bulletLeft >= rectangle.Left &&
+                                    bulletRight <= rectangle.Right &&
+                                    (bullet.ByPlayer ? bullet.Y >= rectangle.Top : bulletBottom <= rectangle.Bottom)))
+                                    collision = false;
 
-                                    if (collision)
-                                    {
-                                        box.ShotsTaken.Add(new Rectangle(
-                                            bullet.X - (int)((bulletRight - bullet.X) * 2.5) / 2,
-                                            bullet.Y + (bullet.ByPlayer ? -1 : 1) * (int)(bulletBottom - bullet.Y) - 6,
-                                            (int)(bulletRight - bullet.X) * 3,
-                                            (int)((bulletBottom - bullet.Y) * 1.25) + 12));
-                                        removeBulletBuffer.Add(bullet);
-                                        break;
-                                    }
-                                }
+                                if (!collision) continue;
+                                box.ShotsTaken.Add(new Rectangle(
+                                    bullet.X - (int)((bulletRight - bullet.X) * 2.5) / 2,
+                                    bullet.Y + (bullet.ByPlayer ? -1 : 1) * (int)(bulletBottom - bullet.Y) - 6,
+                                    (int)(bulletRight - bullet.X) * 3,
+                                    (int)((bulletBottom - bullet.Y) * 1.25) + 12));
+                                removeBulletBuffer.Add(bullet);
+                                break;
                             }
                         }
 
@@ -170,16 +157,11 @@ namespace SpaceInvaders
                         }
                         else
                         {
-                            foreach (Entities.Bullet blt in Bullets)
+                            foreach (Entities.Bullet blt in Bullets.Where(blt => !blt.ByPlayer && !removeBulletBuffer.Contains(blt)).Where(blt => bullet.Y <= blt.Y + (float)Entities.Size / 10 * 9 &&
+                                bullet.X >= blt.X - (float)Entities.Size / 10 * 2 && bullet.X <= blt.X + (float)Entities.Size / 10 * 2))
                             {
-                                if (blt.ByPlayer || removeBulletBuffer.Contains(blt)) continue;
-
-                                if (bullet.Y <= blt.Y + (float)Entities.Size / 10 * 9 &&
-                                    bullet.X >= blt.X - (float)Entities.Size / 10 * 2 && bullet.X <= blt.X + (float)Entities.Size / 10 * 2)
-                                {
-                                    removeBulletBuffer.Add(blt);
-                                    removeBulletBuffer.Add(bullet);
-                                }
+                                removeBulletBuffer.Add(blt);
+                                removeBulletBuffer.Add(bullet);
                             }
                         }
 
@@ -191,7 +173,10 @@ namespace SpaceInvaders
                     Bullets.Remove(bullet);
 
                 foreach (Entities.Entity entity in removeEntitiesBuffer)
+                {
+                    Score += entity.Worth;
                     LivingEntities.Remove(entity);
+                }
 
                 if (_entityAnimationIteration >= Speed * 2 && LivingEntities.Count != 0)
                 {
@@ -213,16 +198,7 @@ namespace SpaceInvaders
                         for (int j = 0; j < entitiesSortedByRow[i]?.Count; j++)
                         {
                             if (entitiesSortedByRow[i][j] == null) continue;
-                            bool contains = false;
-                            foreach (Entities.Entity e in bottomEntities)
-                            {
-                                if (e.X == entitiesSortedByRow[i][j].X)
-                                {
-                                    contains = true;
-                                    break;
-                                }
-                            }
-
+                            bool contains = bottomEntities.Any(e => e.X == entitiesSortedByRow[i][j].X);
                             if (!contains) bottomEntities.Add(entitiesSortedByRow[i][j]);
                         }
                     }
@@ -240,16 +216,14 @@ namespace SpaceInvaders
                         else entity.X += (_isGoingRight ? 1 : -1) * Entities.Size / 2;
                     }
 
-                    foreach (Entities.Entity entity in bottomEntities)
-                    {
-                        if (Rn.Next(0, Difficulty) == 0)
-                            Bullets.Add(new Entities.Bullet(entity.X + Entities.Size / 2, entity.Y + Entities.Size, false));
-                    }
+                    foreach (Entities.Entity entity in bottomEntities.Where(entity => Rn.Next(0, Difficulty) == 0))
+                        Bullets.Add(new Entities.Bullet(entity.X + Entities.Size / 2, entity.Y + Entities.Size, false));
 
                     _entityAnimationIteration = 0;
                 }
                 _entityAnimationIteration++;
             }
+            DrawGameOverlay(pnl, g);
         }
 
         private static void PerformStartup(Panel pnl)
@@ -335,6 +309,11 @@ namespace SpaceInvaders
             game.Overlay = (_, __) => { };
             IsFirstInteraction = true;
             SpawnEntities(pnl);
+        }
+
+        private static void DrawGameOverlay(Panel pnl, Graphics g)
+        {
+            g.DrawString(string.Format(Config.Game.ScoreOverlay.ScoreMessage, Score), Config.Font, new SolidBrush(Config.Colors.Primary), new RectangleF(0, 0, (float) pnl.Width / 2, Config.Font.Size * 2));
         }
     }
 }

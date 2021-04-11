@@ -15,9 +15,11 @@ namespace SpaceInvaders
         /// <summary>
         /// All enemy entities types.
         /// </summary>
-        public enum EntityType
+        public enum EntityType: int
         {
-            Crab, Octopus, Squid
+            Octopus = 10,
+            Crab = 20,
+            Squid = 30
         }
 
         /// <summary>
@@ -36,6 +38,7 @@ namespace SpaceInvaders
             public int Y;
 
             public int Row;
+            public int Worth;
 
             /// <summary>
             /// The first frame for the animation.
@@ -61,6 +64,7 @@ namespace SpaceInvaders
                 this.Shape = Image.FromFile($"./assets/{entityName}.png");
                 this.Shape2 = Image.FromFile($"./assets/{entityName}2.png");
                 this.Row = row;
+                this.Worth = (int) entityType;
             }
 
             /// <summary>
