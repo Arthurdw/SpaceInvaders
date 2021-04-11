@@ -47,8 +47,9 @@ namespace SpaceInvaders
         private static bool _isGoingRight = true;
         public static int Speed => LivingEntities.Count;
         private static readonly Random Rn = new Random();
+
         // public static int Difficulty = 30;
-        public static int Difficulty = 5;
+        public static int Difficulty = 30;
 
         /// <summary>
         /// All the actions that should be taken for the next draw.
@@ -120,7 +121,7 @@ namespace SpaceInvaders
                         // (float)Size / 10, (float)Size / 2)
                         float bulletRight = bullet.X + (float)Entities.Size / 10 * (bullet.ByPlayer ? 1 : 2);
                         float bulletLeft = bullet.X - (float)Entities.Size / 10 * (bullet.ByPlayer ? 1 : 2);
-                        float bulletBottom = bullet.Y + (bullet.ByPlayer ? (float) Entities.Size / 2 : (float)Entities.Size / 10 * 9);
+                        float bulletBottom = bullet.Y + (bullet.ByPlayer ? (float)Entities.Size / 2 : (float)Entities.Size / 10 * 9);
 
                         if (!removeBulletBuffer.Contains(bullet))
                         {
