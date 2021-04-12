@@ -13,9 +13,10 @@ namespace SpaceInvaders
         {
             g.FillRectangle(Config.Game.EscapeMenu.Brush, 0, 0, pnl.Width, pnl.Height);
             g.DrawString(Config.Game.GameOverMenu.GameOverMessage, new Font(Config.FontFamily, (float)pnl.Height / 10), new SolidBrush(Config.Colors.Accent), new RectangleF(0, 0, pnl.Width, pnl.Height), Config.StringFormat);
+            g.DrawString(string.Format(Config.Game.GameOverMenu.ScoreMessage, GameScreen.Score, GameScreen.BaseDifficulty - GameScreen.Difficulty, GameScreen.HighScore), Config.Font, new SolidBrush(Config.Colors.Primary), new RectangleF(0, (float)pnl.Height / 6, pnl.Width, pnl.Height - (float)pnl.Height / 6), Config.StringFormat);
 
             if (_currentIteration <= GoToHomeScreenSpeed)
-                g.DrawString(Config.Game.GameOverMenu.GoHomeMessage, Config.Font, new SolidBrush(Config.Colors.Primary), new RectangleF(0, (float)pnl.Height / 5, pnl.Width, pnl.Height - (float)pnl.Height / 5), Config.StringFormat);
+                g.DrawString(Config.Game.GameOverMenu.GoHomeMessage, Config.Font, new SolidBrush(Config.Colors.Primary), new RectangleF(0, (float)pnl.Height / 4, pnl.Width, pnl.Height - (float)pnl.Height / 4), Config.StringFormat);
 
             _currentIteration = _currentIteration == GoToHomeScreenSpeed * 2 ? 0 : ++_currentIteration;
         }

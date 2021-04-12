@@ -76,11 +76,12 @@ namespace SpaceInvaders
             {
                 public static string GameOverMessage = "GAME OVER";
                 public static string GoHomeMessage = "Press space/enter to go back home";
+                public static string ScoreMessage = "Score: {0} | Difficulty: {1}";
             }
 
             public static class ScoreOverlay
             {
-                public static string ScoreMessage = "Score: {0}";
+                public static string ScoreMessage = "Score: {0} | Difficulty: {1} | High Score: {2}";
             }
         }
     }

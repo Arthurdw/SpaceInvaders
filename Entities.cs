@@ -205,24 +205,26 @@ namespace SpaceInvaders
             {
                 g.FillRectangle(new SolidBrush(Config.Colors.Accent), Rect);
 
-                List<Rectangle> mergedShots = new List<Rectangle>();
-                List<Rectangle> removeBuffer = new List<Rectangle>();
+                // TODO: Fix these optimizations:
+                // List<Rectangle> mergedShots = new List<Rectangle>();
+                // List<Rectangle> removeBuffer = new List<Rectangle>();
 
-                foreach (Rectangle rectangle in ShotsTaken)
-                {
-                    Rectangle rectangleBuffer = rectangle;
-                    foreach (var comp in ShotsTaken.Where(c => rectangle != c && rectangle.Bottom == c.Bottom && rectangle.X <= c.X && rectangle.X + rectangle.Width >= c.X))
-                    {
-                        rectangleBuffer.Width = comp.X + comp.Width - rectangle.X;
-                        removeBuffer.Add(comp);
-                    }
-                    mergedShots.Add(rectangleBuffer);
-                }
+                // foreach (Rectangle rectangle in ShotsTaken)
+                // {
+                //     Rectangle rectangleBuffer = rectangle;
+                //     foreach (var comp in ShotsTaken.Where(c => rectangle != c && rectangle.Bottom == c.Bottom && rectangle.X <= c.X && rectangle.X + rectangle.Width >= c.X))
+                //     {
+                //         rectangleBuffer.Width = comp.X + comp.Width - rectangle.X;
+                //         removeBuffer.Add(comp);
+                //     }
+                //     mergedShots.Add(rectangleBuffer);
+                // }
+                //
+                // foreach (Rectangle rectangle in removeBuffer)
+                //     mergedShots.Remove(rectangle);
+                //
+                // ShotsTaken = mergedShots;
 
-                foreach (Rectangle rectangle in removeBuffer)
-                    mergedShots.Remove(rectangle);
-
-                ShotsTaken = mergedShots;
                 Brush br = new SolidBrush(Config.Colors.PrimaryDarkest);
                 foreach (Rectangle rectangle in ShotsTaken)
                     g.FillRectangle(br, rectangle);

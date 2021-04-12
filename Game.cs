@@ -15,7 +15,7 @@ namespace SpaceInvaders
         public Action<Panel, Graphics> Overlay;
         private DateTime _lastShotFired;
         private DateTime _overlayCooldown;
-
+        
         public Game()
         {
             InitializeComponent();
@@ -106,6 +106,10 @@ namespace SpaceInvaders
                         WelcomeScreen.ScreenPassed = false;
                         this.Callback = WelcomeScreen.Draw;
                         this.Overlay = null;
+
+                        GameScreen.Difficulty = GameScreen.BaseDifficulty;
+                        if (GameScreen.Score > GameScreen.HighScore) GameScreen.HighScore = GameScreen.Score; 
+                        GameScreen.Score = 0;
                     }
                     break;
 

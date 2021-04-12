@@ -41,16 +41,17 @@ namespace SpaceInvaders
         /// The general  brush for the laser.
         /// </summary>
         public static Brush Br = new SolidBrush(Config.Colors.Accent);
-
+        
         private const int EntitiesPerRow = 11;
         private static int _entityAnimationIteration;
         private static bool _isGoingRight = true;
         public static int Speed => LivingEntities.Count;
         private static readonly Random Rn = new Random();
-        public static int Score = 0;
+        public static int Score;
+        public static int HighScore;
 
-        // public static int Difficulty = 30;
-        public static int Difficulty = 30;
+        public const int BaseDifficulty = 30;
+        public static int Difficulty = BaseDifficulty;
 
         /// <summary>
         /// All the actions that should be taken for the next draw.
@@ -63,7 +64,7 @@ namespace SpaceInvaders
         public static List<Entities.Bullet> Bullets = new List<Entities.Bullet>();
 
         public static List<Entities.Entity> LivingEntities = new List<Entities.Entity>();
-        public static List<Entities.Shield> HealthBoxes = new List<Entities.Shield>();
+        public static List<Entities.Shield> Shields = new List<Entities.Shield>();
 
         /// <summary>
         /// Draws the GameScreen.
@@ -80,13 +81,8 @@ namespace SpaceInvaders
             CurrentYLocation = pnl.Height - 20 - Entities.Size;
             CurrentBarrelMiddle = CurrentXLocation + Entities.Size / 2 - (Entities.Size / 10) / 2;
 
-            DrawLaser(g);
-
-            foreach (Entities.Entity entity in LivingEntities)
-                entity.Draw(g, _entityAnimationIteration <= Speed);
-
-            foreach (Entities.Shield box in HealthBoxes)
-                box.Draw(g);
+            foreach (Entities.Shield shield in Shields)
+                shield.Draw(g);
 
             if (IsPaused)
             {
@@ -113,26 +109,26 @@ namespace SpaceInvaders
                             removeEntitiesBuffer.Add(entity);
                             removeBulletBuffer.Add(bullet);
                         }
-
-                        // (float)Size / 10, (float)Size / 2)
+                        
+                        // Calculate bullet positions:
                         float bulletRight = bullet.X + (float)Entities.Size / 10 * (bullet.ByPlayer ? 1 : 2);
                         float bulletLeft = bullet.X - (float)Entities.Size / 10 * (bullet.ByPlayer ? 1 : 2);
                         float bulletBottom = bullet.Y + (bullet.ByPlayer ? (float)Entities.Size / 2 : (float)Entities.Size / 10 * 9);
 
                         if (!removeBulletBuffer.Contains(bullet))
                         {
-                            foreach (Entities.Shield box in HealthBoxes)
+                            foreach (Entities.Shield shield in Shields)
                             {
-                                if (!(bulletRight >= box.Rect.Left) || !(bulletLeft <= box.Rect.Right) ||
-                                    !(bulletBottom >= box.Rect.Top) || bullet.Y > box.Rect.Bottom) continue;
+                                if (!(bulletRight >= shield.Rect.Left) || !(bulletLeft <= shield.Rect.Right) ||
+                                    !(bulletBottom >= shield.Rect.Top) || bullet.Y > shield.Rect.Bottom) continue;
                                 bool collision = true;
-                                foreach (var _ in box.ShotsTaken.Where(rectangle => bulletLeft >= rectangle.Left &&
+                                foreach (var _ in shield.ShotsTaken.Where(rectangle => bulletLeft >= rectangle.Left &&
                                     bulletRight <= rectangle.Right &&
                                     (bullet.ByPlayer ? bullet.Y >= rectangle.Top : bulletBottom <= rectangle.Bottom)))
                                     collision = false;
 
                                 if (!collision) continue;
-                                box.ShotsTaken.Add(new Rectangle(
+                                shield.ShotsTaken.Add(new Rectangle(
                                     bullet.X - (int)((bulletRight - bullet.X) * 2.5) / 2,
                                     bullet.Y + (bullet.ByPlayer ? -1 : 1) * (int)(bulletBottom - bullet.Y) - 6,
                                     (int)(bulletRight - bullet.X) * 3,
@@ -223,7 +219,35 @@ namespace SpaceInvaders
                 }
                 _entityAnimationIteration++;
             }
+
+            foreach (Entities.Entity entity in LivingEntities)
+            {
+                foreach (Entities.Shield shield in Shields)
+                {
+                    if (entity.Y + Entities.Size >= shield.Rect.Y && entity.X + Entities.Size >= shield.Rect.X &&
+                        entity.X <= shield.Rect.Right && entity.Y <= shield.Rect.Bottom)
+                    {
+                        shield.ShotsTaken.Add(new Rectangle(entity.X, entity.Y, Entities.Size, Entities.Size));
+                        break;
+                    }
+                }
+
+                if (entity.Y + Entities.Size >= CurrentYLocation && entity.X + Entities.Size >= CurrentXLocation &&
+                    entity.X <= CurrentXLocation + Entities.Size) GameOverMenu.Enabled = true;
+                entity.Draw(g, _entityAnimationIteration <= Speed);
+            }
+
+            DrawLaser(g);
             DrawGameOverlay(pnl, g);
+
+            // Player won game
+            if (LivingEntities.Count == 0)
+            {
+                PerformStartup(pnl);
+                if (Difficulty != 0)
+                    Difficulty--;
+            }
+
         }
 
         private static void PerformStartup(Panel pnl)
@@ -239,7 +263,7 @@ namespace SpaceInvaders
         private static void SpawnEntities(Panel pnl)
         {
             LivingEntities = new List<Entities.Entity>();
-            HealthBoxes = new List<Entities.Shield>();
+            Shields = new List<Entities.Shield>();
 
             _isGoingRight = true;
             _entityAnimationIteration = 0;
@@ -249,12 +273,12 @@ namespace SpaceInvaders
                 (Entities.EntityType.Octopus, 2)
             };
 
-            int startY = 50;
-            int startX = 10;
-            int row = 0;
-            int jumpSizeX = ((pnl.Width - startX * 2) / 11 - Entities.Size) / 2;
-            int jumpSizeY = Entities.Size / 3;
-            int currentRow = row;
+            const int startY = 50;
+            const int startX = 10;
+            int row = 0,
+                jumpSizeX = ((pnl.Width - startX * 2) / 11 - Entities.Size) / 2,
+                jumpSizeY = Entities.Size / 3,
+                currentRow = row;
 
             foreach ((int idx, Entities.EntityType entity, int rows) in entitiesConfig.Select((tuple, i) => (i, tuple.Item1, tuple.Item2)))
             {
@@ -275,7 +299,7 @@ namespace SpaceInvaders
             }
 
             for (int i = 0; i < 4; i++)
-                HealthBoxes.Add(new Entities.Shield(
+                Shields.Add(new Entities.Shield(
                     (pnl.Width / 9) * (i + 1) + pnl.Width / 9 * i,
                     pnl.Height - pnl.Height / 8 - Entities.Size * 2,
                     pnl.Width / 9,
@@ -312,8 +336,7 @@ namespace SpaceInvaders
         }
 
         private static void DrawGameOverlay(Panel pnl, Graphics g)
-        {
-            g.DrawString(string.Format(Config.Game.ScoreOverlay.ScoreMessage, Score), Config.Font, new SolidBrush(Config.Colors.Primary), new RectangleF(0, 0, (float) pnl.Width / 2, Config.Font.Size * 2));
-        }
+         => g.DrawString(string.Format(Config.Game.ScoreOverlay.ScoreMessage, Score, BaseDifficulty - Difficulty, HighScore), Config.Font, new SolidBrush(Config.Colors.Primary), new RectangleF(0, 0, pnl.Width, Config.Font.Size * 2));
+     
     }
 }
