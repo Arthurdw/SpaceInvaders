@@ -253,9 +253,9 @@ namespace SpaceInvaders
         private static void PerformStartup(Panel pnl)
         {
             EscapeMenu.HighlightedIndex = 0;
+            CurrentXLocation = pnl.Width / 2 - Entities.Size / 2;
             Bullets = new List<Entities.Bullet>();
             ActionBuffer = new List<Action<Panel, Graphics>>();
-            CurrentXLocation = pnl.Width / 2 - Entities.Size / 2;
             SpawnEntities(pnl);
             IsFirstInteraction = false;
         }
