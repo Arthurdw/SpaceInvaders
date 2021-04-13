@@ -30,6 +30,11 @@ namespace SpaceInvaders
 
         public static void Draw(Panel pnl, Graphics g)
         {
+            if (!WelcomeScreen.IsPlayingSong)
+            {
+                WelcomeScreen.SpSong.PlayLooping();
+                WelcomeScreen.IsPlayingSong = true;
+            }
             g.FillRectangle(Config.Game.EscapeMenu.Brush, 0, 0, pnl.Width, pnl.Height);
             g.DrawString(Config.Game.EscapeMenu.TopMessage, new Font(Config.FontFamily, (float)pnl.Height / 15), new SolidBrush(Config.Colors.Accent), new RectangleF(0, 0, pnl.Width, (float)pnl.Height / 5), Config.StringFormat);
             Pnl = pnl;

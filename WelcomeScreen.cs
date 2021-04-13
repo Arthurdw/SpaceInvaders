@@ -1,4 +1,6 @@
-﻿using System.Drawing;
+﻿using System;
+using System.Drawing;
+using System.Media;
 using System.Windows.Forms;
 
 namespace SpaceInvaders
@@ -33,12 +35,16 @@ namespace SpaceInvaders
         /// </summary>
         public static bool ScreenPassed;
 
+        public static bool IsPlayingSong;
+
         public static int EntitiesIterationSpeed = 8;
+        public static readonly SoundPlayer SpSong = new SoundPlayer("./assets/sound/song.wav");
 
         static WelcomeScreen()
         {
             EntitiesFirst = true;
             ScreenPassed = false;
+            IsPlayingSong = false;
         }
 
         /// <summary>
@@ -46,6 +52,11 @@ namespace SpaceInvaders
         /// </summary>
         public static void Draw(Panel pnl, Graphics g)
         {
+            if (!IsPlayingSong && !ScreenPassed)
+            {
+                SpSong.PlayLooping();
+                IsPlayingSong = true;
+            }
             if (EntitiesIteration == EntitiesIterationSpeed)
             {
                 EntitiesLeft += Entities.Size / 8;

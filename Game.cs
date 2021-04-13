@@ -114,7 +114,6 @@ namespace SpaceInvaders
                     break;
 
                 default:
-
                     if (!this._currentPressed.Contains(e.KeyCode))
                         this._currentPressed.Add(e.KeyCode);
                     break;

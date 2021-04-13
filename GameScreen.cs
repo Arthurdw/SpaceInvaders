@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Drawing;
 using System.Linq;
+using System.Media;
 using System.Windows.Forms;
 
 namespace SpaceInvaders
@@ -65,6 +66,12 @@ namespace SpaceInvaders
 
         public static List<Entities.Entity> LivingEntities = new List<Entities.Entity>();
         public static List<Entities.Shield> Shields = new List<Entities.Shield>();
+        private static readonly SoundPlayer Sp1 = new SoundPlayer("./assets/sound/move1.wav");
+        private static readonly SoundPlayer Sp2 = new SoundPlayer("./assets/sound/move2.wav");
+        private static readonly SoundPlayer Sp3 = new SoundPlayer("./assets/sound/move3.wav");
+        private static readonly SoundPlayer Sp4 = new SoundPlayer("./assets/sound/move4.wav");
+        private static readonly SoundPlayer SpShoot = new SoundPlayer("./assets/sound/shoot.wav");
+        private static readonly SoundPlayer SpInvaderKilled = new SoundPlayer("./assets/sound/invaderkilled.wav");
 
         /// <summary>
         /// Draws the GameScreen.
@@ -76,6 +83,7 @@ namespace SpaceInvaders
         /// </summary>
         public static void Draw(Panel pnl, Graphics g)
         {
+
             if (IsFirstInteraction) PerformStartup(pnl);
 
             CurrentYLocation = pnl.Height - 20 - Entities.Size;
@@ -91,6 +99,12 @@ namespace SpaceInvaders
             }
             else
             {
+                if (WelcomeScreen.IsPlayingSong && WelcomeScreen.ScreenPassed)
+                {
+                    WelcomeScreen.SpSong.Stop();
+                    WelcomeScreen.IsPlayingSong = false;
+                }
+
                 foreach (Action<Panel, Graphics> action in ActionBuffer)
                     action(pnl, g);
 
@@ -172,6 +186,7 @@ namespace SpaceInvaders
                 {
                     Score += entity.Worth;
                     LivingEntities.Remove(entity);
+                    SpInvaderKilled.Play();
                 }
 
                 if (_entityAnimationIteration >= Speed * 2 && LivingEntities.Count != 0)
@@ -216,6 +231,7 @@ namespace SpaceInvaders
                         Bullets.Add(new Entities.Bullet(entity.X + Entities.Size / 2, entity.Y + Entities.Size, false));
 
                     _entityAnimationIteration = 0;
+                    (LivingEntities.Count > 40 ? Sp1 : LivingEntities.Count > 30 ? Sp2 : LivingEntities.Count > 20 ? Sp3 : Sp4 ).Play();
                 }
                 _entityAnimationIteration++;
             }
@@ -233,7 +249,8 @@ namespace SpaceInvaders
                 }
 
                 if (entity.Y + Entities.Size >= CurrentYLocation && entity.X + Entities.Size >= CurrentXLocation &&
-                    entity.X <= CurrentXLocation + Entities.Size) GameOverMenu.Enabled = true;
+                    entity.X <= CurrentXLocation + Entities.Size)
+                    GameOverMenu.Enabled = true;
                 entity.Draw(g, _entityAnimationIteration <= Speed);
             }
 
@@ -322,7 +339,10 @@ namespace SpaceInvaders
         /// Let the laser shoot a bullet.
         /// </summary>
         public static void Shoot()
-            => Bullets.Add(new Entities.Bullet(CurrentBarrelMiddle, CurrentYLocation));
+        {
+            SpShoot.Play();
+            Bullets.Add(new Entities.Bullet(CurrentBarrelMiddle, CurrentYLocation));
+        }
 
         /// <summary>
         /// Reset the game.
