@@ -206,16 +206,77 @@ namespace SpaceInvaders
                 g.FillRectangle(new SolidBrush(Config.Colors.Accent), Rect);
 
                 // TODO: Fix these optimizations:
-                // List<Rectangle> mergedShots = new List<Rectangle>();
-                // List<Rectangle> removeBuffer = new List<Rectangle>();
+                // if (ShotsTaken.Count)
+                // {
+                //     List<Rectangle> mergedShots = new List<Rectangle>();
+                //     List<Rectangle> removeBuffer = new List<Rectangle>();
 
                 // foreach (Rectangle rectangle in ShotsTaken)
                 // {
                 //     Rectangle rectangleBuffer = rectangle;
-                //     foreach (var comp in ShotsTaken.Where(c => rectangle != c && rectangle.Bottom == c.Bottom && rectangle.X <= c.X && rectangle.X + rectangle.Width >= c.X))
+                //     foreach (Rectangle comp in ShotsTaken.Where(c => rectangle != c))
                 //     {
-                //         rectangleBuffer.Width = comp.X + comp.Width - rectangle.X;
-                //         removeBuffer.Add(comp);
+                //         if (rectangle.Top == comp.Top && rectangle.Bottom == comp.Bottom)
+                //         {
+                //             bool isRight = comp.Left <= rectangle.Right && comp.Right >= rectangle.Right;
+                //             if (isRight || comp.Right >= rectangle.Left && comp.Left <= rectangle.Left)
+                //             {
+                //                 rectangleBuffer.X = isRight ? rectangle.X : comp.X;
+                //                 rectangleBuffer.Width = isRight
+                //                     ? comp.X + comp.Width - rectangle.X
+                //                     : rectangle.X + rectangle.Width - comp.X;
+                //                 removeBuffer.Add(comp);
+                //             }
+                //         } else if (rectangle.Left == comp.Left && rectangle.Right == comp.Right)
+                //         {
+                //             bool isTop = comp.Top <= rectangle.Top && comp.Bottom >= rectangle.Top;
+                //
+                //             if (isTop || comp.Bottom >= rectangle.Bottom && comp.Top <= rectangle.Bottom)
+                //             {
+                //                 rectangleBuffer.Y = isTop ? comp.Y : rectangle.Y;
+                //                 rectangleBuffer.Height =
+                //                     isTop
+                //                         ? comp.Y + comp.Height - rectangle.Y
+                //                         : rectangle.Y + rectangle.Height - comp.Y;
+                //             }
+                //             removeBuffer.Add(comp);
+                //         }
+
+
+                // if (rectangle.Bottom == comp.Bottom && rectangle.Top == comp.Top && rectangle.X <= comp.X && rectangle.Right >= comp.X) 
+                //     rectangleBuffer.Width = comp.X + comp.Width - rectangle.X;
+                // else if (rectangle.X == comp.X && rectangle.Right == comp.Right && rectangle.Top <= comp.Top &&
+                //          rectangle.Bottom >= comp.Top)
+                //     rectangleBuffer.Height = comp.Y + comp.Height - rectangle.Y;
+                // else removeBuffer.Add(comp);
+                // }
+
+                // Console.WriteLine(rectangleBuffer.Width);
+                //     mergedShots.Add(rectangleBuffer);
+                // }
+
+                //     foreach (Rectangle rectangle in removeBuffer)
+                //         mergedShots.Remove(rectangle);
+                //
+                //     Console.WriteLine(mergedShots.Count);
+                //
+                //     ShotsTaken = mergedShots;
+                // }
+
+                // TODO: Fix these optimizations:
+                // List<Rectangle> mergedShots = new List<Rectangle>();
+                // List<Rectangle> removeBuffer = new List<Rectangle>();
+                //
+                // foreach (Rectangle rectangle in ShotsTaken)
+                // {
+                //     Rectangle rectangleBuffer = rectangle;
+                //     foreach (var comp in ShotsTaken.Where(c => rectangle != c))
+                //     {
+                //         if (rectangle.Bottom == comp.Bottom && rectangle.X <= comp.X && rectangle.X + rectangle.Width >= comp.X)
+                //         {
+                //             rectangleBuffer.Width = comp.X + comp.Width - rectangle.X;
+                //             removeBuffer.Add(comp);
+                //         }
                 //     }
                 //     mergedShots.Add(rectangleBuffer);
                 // }
@@ -223,6 +284,7 @@ namespace SpaceInvaders
                 // foreach (Rectangle rectangle in removeBuffer)
                 //     mergedShots.Remove(rectangle);
                 //
+                // Console.WriteLine(mergedShots.Count);
                 // ShotsTaken = mergedShots;
 
                 Brush br = new SolidBrush(Config.Colors.PrimaryDarkest);
