@@ -84,5 +84,13 @@ namespace SpaceInvaders
                 public static string ScoreMessage = "Score: {0} | Difficulty: {1} | High Score: {2}";
             }
         }
+
+        public static class Credentials
+        {
+            public static string DB_Username = "06InfoArthur";
+            public static string DB_Database = "06InfoArthur";
+            public static string DB_Password = "theWhiteArthur@6@21";
+            public static string DB_Server = "arthur.go-ao.be";
+        }
     }
 }
