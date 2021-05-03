@@ -48,7 +48,7 @@ namespace SpaceInvaders
             {
                 float yPos = startAt + fnt.Size * (idx + 1);
                 if (idx == HighlightedIndex)
-                    g.DrawString(msg, fnt, new SolidBrush(Config.Colors.Back), new RectangleF(10, yPos + 5, pnl.Width - 10, yPos + fnt.Size), Config.StringFormat);
+                    g.DrawString(msg, fnt, new SolidBrush(Color.FromArgb(32, Config.Colors.Primary)), new RectangleF(10, yPos + 5, pnl.Width - 10, yPos + fnt.Size), Config.StringFormat);
 
                 g.DrawString(msg, fnt, br, new RectangleF(0, yPos, pnl.Width, yPos + fnt.Size), Config.StringFormat);
             }

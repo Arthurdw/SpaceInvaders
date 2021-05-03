@@ -19,6 +19,7 @@ namespace SpaceInvaders
         private readonly int _id;
         private readonly string _user;
         private readonly MySqlHandler _mySqlHandler;
+        private bool _hasOpenedConfigScreen = false;
 
         public Game(int id, string user, MySqlHandler handler)
         {
@@ -33,9 +34,7 @@ namespace SpaceInvaders
         private void InitializeForm()
         {
             this.ToggleScreen(true);
-
-            this.ForeColor = Config.Colors.Primary;
-            this.BackColor = Config.Colors.Back;
+            
             this.Callback = WelcomeScreen.Draw;
             this.Overlay = null;
             this._overlayCooldown = DateTime.MinValue;
@@ -44,6 +43,7 @@ namespace SpaceInvaders
             FrameHandler.Start();
             this.Text = $@"Space Invaders - {this._user}";
             Config.CurrentUserName = this._user;
+            Config.Id = this._id;
 
             typeof(Panel).InvokeMember("DoubleBuffered",
                 BindingFlags.SetProperty | BindingFlags.Instance | BindingFlags.NonPublic,
@@ -52,8 +52,11 @@ namespace SpaceInvaders
 
         private void DrawPanel(object sender, PaintEventArgs e)
         {
+            pnl.BackColor = Config.Colors.PrimaryDarkest;
             e.Graphics.TextRenderingHint = TextRenderingHint.AntiAlias;
             e.Graphics.SmoothingMode = SmoothingMode.AntiAlias;
+            this.ForeColor = Config.Colors.Primary;
+            this.BackColor = Config.Colors.Back;
             this.HandleKeyEvents();
             this.Callback(pnl, e.Graphics);
             if (Overlay == null && GameOverMenu.Enabled)
@@ -66,6 +69,7 @@ namespace SpaceInvaders
 
         private void HandleWindowContentLocation(object sender, EventArgs e)
         {
+            if (!Config.ResponsivenessEnabled) return;
             // TODO: Fix the panel height issue
             pnl.Width = pnl.Height = this.Width < this.Height ? this.Width : this.Height;
 
@@ -82,6 +86,19 @@ namespace SpaceInvaders
             // Handle some keys in here, to prevent repetitions
             switch (e.KeyCode)
             {
+                case Keys.C:
+                    if (!this._hasOpenedConfigScreen)
+                    {
+                        ConfigScreen cfg = new ConfigScreen(this._mySqlHandler);
+                        cfg.Closed += (_, __) =>
+                        {
+                            this._hasOpenedConfigScreen = false;
+                            if (Config.ShouldDie) this.Close();
+                        };
+                        this._hasOpenedConfigScreen = true;
+                        cfg.Show();
+                    }
+                    break;
                 case Keys.OemQuestion:
                     if (!WelcomeScreen.ScreenPassed)
                         this.Overlay = ControlsOverlay.Draw;

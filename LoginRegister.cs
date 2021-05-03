@@ -8,7 +8,7 @@ namespace SpaceInvaders
 {
     public partial class LoginRegister : Form
     {
-        private bool isLoggingIn = true;
+        private bool _isLoggingIn = true;
         private readonly MySqlHandler _mySqlHandler;
 
         public LoginRegister()
@@ -31,7 +31,7 @@ namespace SpaceInvaders
                 return;
             }
 
-            if (this.isLoggingIn) this.TryLogin();
+            if (this._isLoggingIn) this.TryLogin();
             else this.TryRegister();
         }
 
@@ -39,7 +39,7 @@ namespace SpaceInvaders
         {
             MySqlCommand cmd = this._mySqlHandler.Prepare("SELECT id, name FROM EX2_space_invaders_accounts WHERE LOWER(name) = @name and password = PASSWORD(@password);",
                 ("@name", txtUsername.Text.ToLower()),
-                ("@password", this.HashPassword(txtPassword.Text, txtUsername.Text.ToLower())));
+                ("@password", Util.HashPassword(txtPassword.Text, txtUsername.Text.ToLower())));
 
             this._mySqlHandler.Connection.Open();
             MySqlDataReader rdr = cmd.ExecuteReader();
@@ -104,7 +104,7 @@ namespace SpaceInvaders
                 MySqlCommand cmd =
                     this._mySqlHandler.Prepare(
                         "INSERT INTO EX2_space_invaders_accounts (name, password, password_raw) VALUES (@name, PASSWORD(@password), @raw_password);",
-                        ("@name", txtUsername.Text), ("@password", this.HashPassword(txtPassword.Text, txtUsername.Text.ToLower())), ("@raw_password", txtPassword.Text));
+                        ("@name", txtUsername.Text), ("@password", Util.HashPassword(txtPassword.Text, txtUsername.Text.ToLower())), ("@raw_password", txtPassword.Text));
                 this._mySqlHandler.Execute(cmd);
             }
 
@@ -139,32 +139,12 @@ namespace SpaceInvaders
             game.Show();
         }
 
-        private string HashPassword(string pwd, string username)
-        {
-            pwd = $"5p4c3 1nv4d3r5::{pwd}::{username}";
-
-            byte[] dt = Encoding.UTF8.GetBytes(pwd);
-            for (int i = 0; i < dt.Length; i++)
-                dt[i] = (byte)(~dt[i] | dt[i] >> 2 & dt[i] << 2);
-
-            using (SHA512 sha512Hash = SHA512.Create())
-            {
-                byte[] bytes = sha512Hash.ComputeHash(dt);
-
-                StringBuilder sb = new StringBuilder();
-                foreach (byte t in bytes)
-                    sb.Append(t.ToString("x"));
-
-                return sb.ToString();
-            }
-        }
-
         private void SwitchForm_Click(object sender, EventArgs e)
         {
-            button1.Text = this.isLoggingIn ? Config.LoginRegister.RegisterButtonText : Config.LoginRegister.LoginButtonText;
-            lblSwitchForm.Text = this.isLoggingIn ? Config.LoginRegister.RegisterLabelText : Config.LoginRegister.LoginLabelText;
+            button1.Text = this._isLoggingIn ? Config.LoginRegister.RegisterButtonText : Config.LoginRegister.LoginButtonText;
+            lblSwitchForm.Text = this._isLoggingIn ? Config.LoginRegister.RegisterLabelText : Config.LoginRegister.LoginLabelText;
             this.Text = button1.Text;
-            this.isLoggingIn = !this.isLoggingIn;
+            this._isLoggingIn = !this._isLoggingIn;
         }
     }
 }

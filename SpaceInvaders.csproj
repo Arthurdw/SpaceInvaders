@@ -48,6 +48,12 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Config.cs" />
+    <Compile Include="ConfigScreen.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="ConfigScreen.Designer.cs">
+      <DependentUpon>ConfigScreen.cs</DependentUpon>
+    </Compile>
     <Compile Include="ControlsOverlay.cs" />
     <Compile Include="Entities.cs" />
     <Compile Include="EscapeMenu.cs" />
@@ -68,7 +74,11 @@
     <Compile Include="MySQLHandler.cs" />
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="Util.cs" />
     <Compile Include="WelcomeScreen.cs" />
+    <EmbeddedResource Include="ConfigScreen.resx">
+      <DependentUpon>ConfigScreen.cs</DependentUpon>
+    </EmbeddedResource>
     <EmbeddedResource Include="Game.resx">
       <DependentUpon>Game.cs</DependentUpon>
     </EmbeddedResource>

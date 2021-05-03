@@ -9,7 +9,10 @@ namespace SpaceInvaders
     /// </summary>
     public static class Config
     {
+        public static int Id = 0;
         public static string CurrentUserName = "<username>";
+        public static bool ResponsivenessEnabled = true;
+        public static bool ShouldDie = false;
 
         /// <summary>
         /// The font that should be used throughout the game.
@@ -39,16 +42,45 @@ namespace SpaceInvaders
             FontFamily = pfc.Families[0];
         }
 
+        public static class Themes
+        {
+            public static class Default
+            {
+                public static Color Back = Color.FromArgb(41, 50, 65);
+                public static Color Accent = Color.FromArgb(239, 108, 77);
+                public static Color Primary = Color.FromArgb(224, 251, 252);
+                public static Color PrimaryDark = Color.FromArgb(152, 193, 217);
+                public static Color PrimaryDarkest = Color.FromArgb(61, 90, 128);
+            }
+
+            public static class Retro
+            {
+                public static Color Back = Color.FromArgb(0, 0, 0);
+                public static Color Accent = Color.FromArgb(16, 255, 35);
+                public static Color Primary = Color.FromArgb(255, 255, 255);
+                public static Color PrimaryDark = Color.FromArgb(128, 255, 255, 255);
+                public static Color PrimaryDarkest = Color.FromArgb(0, 0, 0);
+            }
+            public static class Stylish
+            {
+                public static Color Back = Color.FromArgb(0, 0, 0);
+                public static Color Accent = Color.FromArgb(252, 163, 17);
+                public static Color Primary = Color.FromArgb(255, 255, 255);
+                public static Color PrimaryDark = Color.FromArgb(229, 229, 229);
+                public static Color PrimaryDarkest = Color.FromArgb(20, 33, 61);
+            }
+        }
+
         /// <summary>
         /// The general color scheme for the game.
         /// </summary>
         public static class Colors
         {
-            public static Color Back = Color.FromArgb(41, 50, 65);
-            public static Color Accent = Color.FromArgb(239, 108, 77);
-            public static Color Primary = Color.FromArgb(224, 251, 252);
-            public static Color PrimaryDark = Color.FromArgb(152, 193, 217);
-            public static Color PrimaryDarkest = Color.FromArgb(61, 90, 128);
+            public static Color Back = Themes.Default.Back;
+            public static Color Accent = Themes.Default.Accent;
+            public static Color Primary = Themes.Default.Primary;
+            public static Color PrimaryDark = Themes.Default.PrimaryDark;
+            public static Color PrimaryDarkest = Themes.Default.PrimaryDarkest;
         }
 
         public static class Game
@@ -56,7 +88,9 @@ namespace SpaceInvaders
             public static class WelcomeScreen
             {
                 public static string GameTitleMessage = "SPACE\r\nINVADERS";
-                public static string ContinueToGameMessage = "Press space/enter...\r\nPress ? to see the controls";
+                public static string ContinueToGameMessage = "Press space/enter...\r\n" +
+                                                             "Press ? to see the controls\r\n" +
+                                                             "Press c to update the settings";
 
                 public static Entities.EntityType TopEntityType = Entities.EntityType.Octopus;
                 public static Entities.EntityType BottomEntityType = Entities.EntityType.Crab;

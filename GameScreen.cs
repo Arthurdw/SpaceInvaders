@@ -38,11 +38,6 @@ namespace SpaceInvaders
         /// </summary>
         public static bool IsPaused = false;
 
-        /// <summary>
-        /// The general  brush for the laser.
-        /// </summary>
-        public static Brush Br = new SolidBrush(Config.Colors.Accent);
-
         private const int EntitiesPerRow = 11;
         private static int _entityAnimationIteration;
         private static bool _isGoingRight = true;
@@ -327,7 +322,7 @@ namespace SpaceInvaders
         /// </summary>
         private static void DrawLaser(Graphics g)
         {
-            g.FillRectangles(Br, new[]
+            g.FillRectangles(new SolidBrush(Config.Colors.Accent), new[]
             {
                 new Rectangle(CurrentBarrelMiddle, CurrentYLocation + Entities.Size / 5, Entities.Size / 10, Entities.Size / 2),
                 new Rectangle(CurrentXLocation, CurrentYLocation + Entities.Size / 2, Entities.Size, Entities.Size / 2)

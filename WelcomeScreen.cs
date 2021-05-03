@@ -93,8 +93,6 @@ namespace SpaceInvaders
             else PressEnterToPlayIteration++;
 
             EntitiesIteration++;
-
-            pnl.BackColor = Config.Colors.PrimaryDarkest;
         }
     }
 }
