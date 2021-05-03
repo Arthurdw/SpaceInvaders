@@ -50,6 +50,7 @@ namespace SpaceInvaders
         private static readonly Random Rn = new Random();
         public static int Score;
         public static int HighScore;
+        public static bool HasSavedHighScore = false;
 
         public const int BaseDifficulty = 30;
         public static int Difficulty = BaseDifficulty;
@@ -350,10 +351,11 @@ namespace SpaceInvaders
             IsPaused = false;
             game.Overlay = (_, __) => { };
             IsFirstInteraction = true;
+            GameScreen.HasSavedHighScore = false;
             SpawnEntities(pnl);
         }
 
         private static void DrawGameOverlay(Panel pnl, Graphics g)
-         => g.DrawString(string.Format(Config.Game.ScoreOverlay.ScoreMessage, Score, BaseDifficulty - Difficulty, HighScore), Config.Font, new SolidBrush(Config.Colors.Primary), new RectangleF(0, 0, pnl.Width, Config.Font.Size * 2));
+         => g.DrawString(string.Format(Config.Game.ScoreOverlay.ScoreMessage, Score, BaseDifficulty - Difficulty, HighScore, Config.CurrentUserName, DateTime.Now.ToLongTimeString()), Config.Font, new SolidBrush(Config.Colors.Primary), new RectangleF(0, 0, pnl.Width, Config.Font.Size * 2));
     }
 }

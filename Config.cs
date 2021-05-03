@@ -9,6 +9,8 @@ namespace SpaceInvaders
     /// </summary>
     public static class Config
     {
+        public static string CurrentUserName = "<username>";
+
         /// <summary>
         /// The font that should be used throughout the game.
         /// </summary>
@@ -76,12 +78,14 @@ namespace SpaceInvaders
             {
                 public static string GameOverMessage = "GAME OVER";
                 public static string GoHomeMessage = "Press space/enter to go back home";
+                public static string SaveScoreMessage = "Press s to save your score";
+                public static string ScoreSavedMessage = "Score has been saved";
                 public static string ScoreMessage = "Score: {0} | Difficulty: {1}";
             }
 
             public static class ScoreOverlay
             {
-                public static string ScoreMessage = "Score: {0} | Difficulty: {1} | High Score: {2}";
+                public static string ScoreMessage = "Score: {0} | Difficulty: {1} | High Score: {2} | {3} | {4}";
             }
         }
 

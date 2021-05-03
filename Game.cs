@@ -5,6 +5,7 @@ using System.Drawing.Drawing2D;
 using System.Drawing.Text;
 using System.Reflection;
 using System.Windows.Forms;
+using MySql.Data.MySqlClient;
 
 namespace SpaceInvaders
 {
@@ -42,6 +43,7 @@ namespace SpaceInvaders
             this._lastShotFired = DateTime.MinValue;
             FrameHandler.Start();
             this.Text = $@"Space Invaders - {this._user}";
+            Config.CurrentUserName = this._user;
 
             typeof(Panel).InvokeMember("DoubleBuffered",
                 BindingFlags.SetProperty | BindingFlags.Instance | BindingFlags.NonPublic,
@@ -217,6 +219,16 @@ namespace SpaceInvaders
                     break;
 
                 case Keys.S:
+                    if (GameOverMenu.Enabled)
+                    {
+                        GameScreen.HasSavedHighScore = true;
+                        MySqlCommand cmd = this._mySqlHandler.Prepare(
+                            "INSERT INTO EX2_space_invaders_scores (owner, score) VALUES (@owner, @score);",
+                            ("@owner", this._id), ("@score", GameScreen.Score));
+                        this._mySqlHandler.Execute(cmd);
+                    }
+                    else goto case Keys.Down;
+                    break;
                 case Keys.Down:
                     if (EscapeMenu.HighlightedIndex == EscapeMenu.Items.Length - 1) break;
                     EscapeMenu.HighlightedIndex++;

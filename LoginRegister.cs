@@ -74,6 +74,11 @@ namespace SpaceInvaders
 
         private void TryRegister()
         {
+            if (txtUsername.Text.Length > 17)
+            {
+                MessageBox.Show(@"Username mustn't exceed 17 characters!");
+                return;
+            }
             {
                 MySqlCommand cmd = this._mySqlHandler.Prepare(
                     "SELECT name FROM EX2_space_invaders_accounts WHERE LOWER(name) = @name;",
