@@ -48,6 +48,7 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Config.cs" />
+    <Compile Include="ControlsOverlay.cs" />
     <Compile Include="Entities.cs" />
     <Compile Include="EscapeMenu.cs" />
     <Compile Include="Game.cs">

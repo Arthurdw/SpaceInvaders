@@ -15,10 +15,17 @@ namespace SpaceInvaders
         public Action<Panel, Graphics> Overlay;
         private DateTime _lastShotFired;
         private DateTime _overlayCooldown;
-        
-        public Game()
+        private readonly int _id;
+        private readonly string _user;
+        private readonly MySqlHandler _mySqlHandler;
+
+        public Game(int id, string user, MySqlHandler handler)
         {
             InitializeComponent();
+
+            this._id = id;
+            this._user = user;
+            this._mySqlHandler = handler;
             InitializeForm();
         }
 
@@ -34,6 +41,7 @@ namespace SpaceInvaders
             this._currentPressed = new List<Keys>();
             this._lastShotFired = DateTime.MinValue;
             FrameHandler.Start();
+            this.Text = $@"Space Invaders - {this._user}";
 
             typeof(Panel).InvokeMember("DoubleBuffered",
                 BindingFlags.SetProperty | BindingFlags.Instance | BindingFlags.NonPublic,
@@ -72,6 +80,11 @@ namespace SpaceInvaders
             // Handle some keys in here, to prevent repetitions
             switch (e.KeyCode)
             {
+                case Keys.OemQuestion:
+                    if (!WelcomeScreen.ScreenPassed)
+                        this.Overlay = ControlsOverlay.Draw;
+                    break;
+
                 case Keys.F11:
                 case Keys.Up:
                 case Keys.Down:
@@ -108,7 +121,7 @@ namespace SpaceInvaders
                         this.Overlay = null;
 
                         GameScreen.Difficulty = GameScreen.BaseDifficulty;
-                        if (GameScreen.Score > GameScreen.HighScore) GameScreen.HighScore = GameScreen.Score; 
+                        if (GameScreen.Score > GameScreen.HighScore) GameScreen.HighScore = GameScreen.Score;
                         GameScreen.Score = 0;
                     }
                     break;
@@ -124,6 +137,7 @@ namespace SpaceInvaders
         {
             if (this._currentPressed.Contains(e.KeyCode))
                 this._currentPressed.Remove(e.KeyCode);
+            else if (e.KeyCode == Keys.OemQuestion) this.Overlay = null;
         }
 
         private void ToggleScreen(bool toFull)
@@ -179,6 +193,7 @@ namespace SpaceInvaders
                     {
                         WelcomeScreen.ScreenPassed = true;
                         this.Callback = GameScreen.Draw;
+                        this.Overlay = null;
                     }
                     break;
 

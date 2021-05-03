@@ -1,5 +1,5 @@
-﻿using System;
-using MySql.Data.MySqlClient;
+﻿using MySql.Data.MySqlClient;
+using System;
 
 namespace SpaceInvaders
 {
@@ -8,7 +8,7 @@ namespace SpaceInvaders
     /// This dataclass simplifies development a bit as it pre-fills the most used values.
     /// </summary>
     /// <see cref="MySqlHandler"/>
-    internal class MySqlClient
+    public class MySqlClient
     {
         /// <value>Property <c>Server</c> represents the IP/hostname of the MySQL DB server.</value>
         public string Server { get; private set; }
@@ -75,14 +75,14 @@ namespace SpaceInvaders
     /// An easy way to manage your MySQL in C#.
     /// This class has some useful methods that simplify working with a MySQL DB.
     /// </summary>
-    internal class MySqlHandler
+    public class MySqlHandler
     {
         /// <value>
         /// A MySQL connection to the DB.
         /// This is required to interact with the server.
         /// </value>
         /// <see cref="MySqlConnection"/>
-        private readonly MySqlConnection _connection;
+        public readonly MySqlConnection Connection;
 
         /// <summary>
         /// Create a MySQL handler from <c>MySqlClient</c> object.
@@ -103,7 +103,7 @@ namespace SpaceInvaders
                                     $"Uid={client.UserName};" +
                                     $"Pwd={client.Password};";
 
-            this._connection = new MySqlConnection(connectionString);
+            this.Connection = new MySqlConnection(connectionString);
         }
 
         /// <summary>
@@ -114,9 +114,9 @@ namespace SpaceInvaders
         /// <returns>The executable function its return instance.</returns>
         private T PerformSqlAction<T>(Func<T> executable)
         {
-            this._connection.Open();
+            this.Connection.Open();
             var returnValue = executable();
-            this._connection.Close();
+            this.Connection.Close();
             return returnValue;
         }
 
@@ -127,7 +127,7 @@ namespace SpaceInvaders
         /// <returns>A fully prepared <c>MySqlCommand</c></returns>
         /// <see cref="MySqlCommand"/>
         public MySqlCommand Prepare(string sqlStatement)
-            => new MySqlCommand(sqlStatement, this._connection);
+            => new MySqlCommand(sqlStatement, this.Connection);
 
         /// <summary>
         /// Create a <c>MySqlCommand</c> from a sql statement with parameters.
@@ -162,7 +162,7 @@ namespace SpaceInvaders
         /// <see cref="MySqlCommand"/>
         public MySqlCommand Prepare(string sqlStatement, params (string, object)[] parameters)
         {
-            MySqlCommand command = new MySqlCommand(sqlStatement, this._connection);
+            MySqlCommand command = new MySqlCommand(sqlStatement, this.Connection);
 
             // Iterate through every item and add it as parameter.
             foreach (var (parameterName, value) in parameters)

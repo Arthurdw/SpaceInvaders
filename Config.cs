@@ -54,7 +54,7 @@ namespace SpaceInvaders
             public static class WelcomeScreen
             {
                 public static string GameTitleMessage = "SPACE\r\nINVADERS";
-                public static string ContinueToGameMessage = "Press space/enter...";
+                public static string ContinueToGameMessage = "Press space/enter...\r\nPress ? to see the controls";
 
                 public static Entities.EntityType TopEntityType = Entities.EntityType.Octopus;
                 public static Entities.EntityType BottomEntityType = Entities.EntityType.Crab;
@@ -87,10 +87,19 @@ namespace SpaceInvaders
 
         public static class Credentials
         {
-            public static string DB_Username = "06InfoArthur";
-            public static string DB_Database = "06InfoArthur";
-            public static string DB_Password = "theWhiteArthur@6@21";
-            public static string DB_Server = "arthur.go-ao.be";
+            public static string DbUsername = "06InfoArthur";
+            public static string DbDatabase = "06InfoArthur";
+            public static string DbPassword = "theWhiteArthur@6@21";
+            public static string DbServer = "arthur.go-ao.be";
+        }
+
+        public static class LoginRegister
+        {
+            public static string LoginButtonText = "Sign In";
+            public static string RegisterButtonText = "Register";
+
+            public static string LoginLabelText = "Don't have an account? Create one!";
+            public static string RegisterLabelText = "Already have an account? Sign in!";
         }
     }
 }

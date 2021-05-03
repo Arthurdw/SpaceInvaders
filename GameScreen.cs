@@ -42,7 +42,7 @@ namespace SpaceInvaders
         /// The general  brush for the laser.
         /// </summary>
         public static Brush Br = new SolidBrush(Config.Colors.Accent);
-        
+
         private const int EntitiesPerRow = 11;
         private static int _entityAnimationIteration;
         private static bool _isGoingRight = true;
@@ -83,7 +83,6 @@ namespace SpaceInvaders
         /// </summary>
         public static void Draw(Panel pnl, Graphics g)
         {
-
             if (IsFirstInteraction) PerformStartup(pnl);
 
             CurrentYLocation = pnl.Height - 20 - Entities.Size;
@@ -123,7 +122,7 @@ namespace SpaceInvaders
                             removeEntitiesBuffer.Add(entity);
                             removeBulletBuffer.Add(bullet);
                         }
-                        
+
                         // Calculate bullet positions:
                         float bulletRight = bullet.X + (float)Entities.Size / 10 * (bullet.ByPlayer ? 1 : 2);
                         float bulletLeft = bullet.X - (float)Entities.Size / 10 * (bullet.ByPlayer ? 1 : 2);
@@ -231,7 +230,7 @@ namespace SpaceInvaders
                         Bullets.Add(new Entities.Bullet(entity.X + Entities.Size / 2, entity.Y + Entities.Size, false));
 
                     _entityAnimationIteration = 0;
-                    (LivingEntities.Count > 40 ? Sp1 : LivingEntities.Count > 30 ? Sp2 : LivingEntities.Count > 20 ? Sp3 : Sp4 ).Play();
+                    (LivingEntities.Count > 40 ? Sp1 : LivingEntities.Count > 30 ? Sp2 : LivingEntities.Count > 20 ? Sp3 : Sp4).Play();
                 }
                 _entityAnimationIteration++;
             }
@@ -264,7 +263,6 @@ namespace SpaceInvaders
                 if (Difficulty != 0)
                     Difficulty--;
             }
-
         }
 
         private static void PerformStartup(Panel pnl)
@@ -357,6 +355,5 @@ namespace SpaceInvaders
 
         private static void DrawGameOverlay(Panel pnl, Graphics g)
          => g.DrawString(string.Format(Config.Game.ScoreOverlay.ScoreMessage, Score, BaseDifficulty - Difficulty, HighScore), Config.Font, new SolidBrush(Config.Colors.Primary), new RectangleF(0, 0, pnl.Width, Config.Font.Size * 2));
-     
     }
 }

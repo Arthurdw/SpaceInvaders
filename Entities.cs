@@ -1,7 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Drawing;
-using System.Linq;
 
 namespace SpaceInvaders
 {
@@ -15,7 +14,7 @@ namespace SpaceInvaders
         /// <summary>
         /// All enemy entities types.
         /// </summary>
-        public enum EntityType: int
+        public enum EntityType : int
         {
             Octopus = 10,
             Crab = 20,
@@ -64,7 +63,7 @@ namespace SpaceInvaders
                 this.Shape = Image.FromFile($"./assets/{entityName}.png");
                 this.Shape2 = Image.FromFile($"./assets/{entityName}2.png");
                 this.Row = row;
-                this.Worth = (int) entityType;
+                this.Worth = (int)entityType;
             }
 
             /// <summary>
@@ -242,8 +241,7 @@ namespace SpaceInvaders
                 //             removeBuffer.Add(comp);
                 //         }
 
-
-                // if (rectangle.Bottom == comp.Bottom && rectangle.Top == comp.Top && rectangle.X <= comp.X && rectangle.Right >= comp.X) 
+                // if (rectangle.Bottom == comp.Bottom && rectangle.Top == comp.Top && rectangle.X <= comp.X && rectangle.Right >= comp.X)
                 //     rectangleBuffer.Width = comp.X + comp.Width - rectangle.X;
                 // else if (rectangle.X == comp.X && rectangle.Right == comp.Right && rectangle.Top <= comp.Top &&
                 //          rectangle.Bottom >= comp.Top)

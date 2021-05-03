@@ -21,7 +21,8 @@ namespace SpaceInvaders
                 SpPlayerDeath.Play();
                 _isFirst = false;
                 _startSongIn = DateTime.Now.AddSeconds(2);
-            } else if (_startSongIn <= DateTime.Now && !WelcomeScreen.IsPlayingSong)
+            }
+            else if (_startSongIn <= DateTime.Now && !WelcomeScreen.IsPlayingSong)
             {
                 WelcomeScreen.SpSong.PlayLooping();
                 WelcomeScreen.IsPlayingSong = true;
