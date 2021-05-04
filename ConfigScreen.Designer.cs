@@ -39,6 +39,7 @@ namespace SpaceInvaders
             this.label2 = new System.Windows.Forms.Label();
             this.label3 = new System.Windows.Forms.Label();
             this.button1 = new System.Windows.Forms.Button();
+            this.btnClearDatabase = new System.Windows.Forms.Button();
             this.SuspendLayout();
             // 
             // btnResetPass
@@ -140,11 +141,23 @@ namespace SpaceInvaders
             this.button1.UseVisualStyleBackColor = true;
             this.button1.Click += new System.EventHandler(this.Button1_Click);
             // 
+            // btnClearDatabase
+            // 
+            this.btnClearDatabase.Font = new System.Drawing.Font("Microsoft Sans Serif", 12.25F);
+            this.btnClearDatabase.Location = new System.Drawing.Point(12, 272);
+            this.btnClearDatabase.Name = "btnClearDatabase";
+            this.btnClearDatabase.Size = new System.Drawing.Size(374, 34);
+            this.btnClearDatabase.TabIndex = 10;
+            this.btnClearDatabase.Text = "CLEAR DATABASE";
+            this.btnClearDatabase.UseVisualStyleBackColor = true;
+            this.btnClearDatabase.Click += new System.EventHandler(this.BtnClearDatabase_Click);
+            // 
             // ConfigScreen
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(398, 274);
+            this.ClientSize = new System.Drawing.Size(398, 321);
+            this.Controls.Add(this.btnClearDatabase);
             this.Controls.Add(this.button1);
             this.Controls.Add(this.label3);
             this.Controls.Add(this.label2);
@@ -174,5 +187,6 @@ namespace SpaceInvaders
         private System.Windows.Forms.Label label2;
         private System.Windows.Forms.Label label3;
         private System.Windows.Forms.Button button1;
+        private System.Windows.Forms.Button btnClearDatabase;
     }
 }

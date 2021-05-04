@@ -37,7 +37,7 @@ namespace SpaceInvaders
 
         private void TryLogin()
         {
-            MySqlCommand cmd = this._mySqlHandler.Prepare("SELECT id, name FROM EX2_space_invaders_accounts WHERE LOWER(name) = @name and password = PASSWORD(@password);",
+            MySqlCommand cmd = this._mySqlHandler.Prepare("SELECT id, name, is_admin FROM EX2_space_invaders_accounts WHERE LOWER(name) = @name and password = PASSWORD(@password);",
                 ("@name", txtUsername.Text.ToLower()),
                 ("@password", Util.HashPassword(txtPassword.Text, txtUsername.Text.ToLower())));
 
@@ -52,6 +52,7 @@ namespace SpaceInvaders
                 {
                     int id = (int)rdr[0];
                     string name = (string)rdr[1];
+                    Config.IsAdmin = (bool) rdr[2];
                     valid = true;
 
                     this.OpenGame(id, name);

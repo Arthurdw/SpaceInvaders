@@ -13,6 +13,7 @@ namespace SpaceInvaders
         public static string CurrentUserName = "<username>";
         public static bool ResponsivenessEnabled = true;
         public static bool ShouldDie = false;
+        public static bool IsAdmin = false;
 
         /// <summary>
         /// The font that should be used throughout the game.

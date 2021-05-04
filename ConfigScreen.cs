@@ -26,6 +26,7 @@ namespace SpaceInvaders
             btnTheme1.BackColor = Config.Themes.Default.Accent;
             btnTheme2.BackColor = Config.Themes.Retro.Accent;
             btnTheme3.BackColor = Config.Themes.Stylish.Accent;
+            this.Height = Config.IsAdmin ? 357 : 310; 
         }
 
         private void BtnTheme1_Click(object sender, EventArgs e)
@@ -90,6 +91,18 @@ namespace SpaceInvaders
                 this._mySqlHandler.Execute(cmd);
                 Config.ShouldDie = true;
                 this.Close();
+            }
+        }
+
+        private void BtnClearDatabase_Click(object sender, EventArgs e)
+        {
+            DialogResult res = MessageBox.Show(@"This action is irreversible and will delete all user data! (so no admin data) Are you sure you want to continue?", @"WARNING", MessageBoxButtons.OKCancel, MessageBoxIcon.Asterisk);
+            
+            if (res == DialogResult.OK)
+            {
+                MySqlCommand cmd =
+                    this._mySqlHandler.Prepare("DELETE FROM EX2_space_invaders_accounts WHERE is_admin = 0;");
+                this._mySqlHandler.Execute(cmd);
             }
         }
     }
