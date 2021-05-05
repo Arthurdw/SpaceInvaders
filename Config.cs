@@ -62,6 +62,7 @@ namespace SpaceInvaders
                 public static Color PrimaryDark = Color.FromArgb(128, 255, 255, 255);
                 public static Color PrimaryDarkest = Color.FromArgb(0, 0, 0);
             }
+
             public static class Stylish
             {
                 public static Color Back = Color.FromArgb(0, 0, 0);
@@ -89,9 +90,11 @@ namespace SpaceInvaders
             public static class WelcomeScreen
             {
                 public static string GameTitleMessage = "SPACE\r\nINVADERS";
+
                 public static string ContinueToGameMessage = "Press space/enter...\r\n" +
                                                              "Press ? to see the controls\r\n" +
-                                                             "Press c to update the settings";
+                                                             "Press c to update the settings\r\n" +
+                                                             "Press s to see all the statistics";
 
                 public static Entities.EntityType TopEntityType = Entities.EntityType.Octopus;
                 public static Entities.EntityType BottomEntityType = Entities.EntityType.Crab;

@@ -34,8 +34,11 @@ namespace SpaceInvaders
             this.globalToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.top5ToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.top10ToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.top100ToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.dgv = new System.Windows.Forms.DataGridView();
             this.txtFilter = new System.Windows.Forms.TextBox();
+            this.cbFilters = new System.Windows.Forms.ComboBox();
+            this.allToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.menuStrip1.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.dgv)).BeginInit();
             this.SuspendLayout();
@@ -62,7 +65,9 @@ namespace SpaceInvaders
             // 
             this.globalToolStripMenuItem.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] {
             this.top5ToolStripMenuItem,
-            this.top10ToolStripMenuItem});
+            this.top10ToolStripMenuItem,
+            this.top100ToolStripMenuItem,
+            this.allToolStripMenuItem});
             this.globalToolStripMenuItem.Name = "globalToolStripMenuItem";
             this.globalToolStripMenuItem.Size = new System.Drawing.Size(53, 20);
             this.globalToolStripMenuItem.Text = "Global";
@@ -70,14 +75,23 @@ namespace SpaceInvaders
             // top5ToolStripMenuItem
             // 
             this.top5ToolStripMenuItem.Name = "top5ToolStripMenuItem";
-            this.top5ToolStripMenuItem.Size = new System.Drawing.Size(107, 22);
+            this.top5ToolStripMenuItem.Size = new System.Drawing.Size(180, 22);
             this.top5ToolStripMenuItem.Text = "top 5";
+            this.top5ToolStripMenuItem.Click += new System.EventHandler(this.Top5ToolStripMenuItem_Click);
             // 
             // top10ToolStripMenuItem
             // 
             this.top10ToolStripMenuItem.Name = "top10ToolStripMenuItem";
-            this.top10ToolStripMenuItem.Size = new System.Drawing.Size(107, 22);
+            this.top10ToolStripMenuItem.Size = new System.Drawing.Size(180, 22);
             this.top10ToolStripMenuItem.Text = "top 10";
+            this.top10ToolStripMenuItem.Click += new System.EventHandler(this.Top10ToolStripMenuItem_Click);
+            // 
+            // top100ToolStripMenuItem
+            // 
+            this.top100ToolStripMenuItem.Name = "top100ToolStripMenuItem";
+            this.top100ToolStripMenuItem.Size = new System.Drawing.Size(180, 22);
+            this.top100ToolStripMenuItem.Text = "top 100";
+            this.top100ToolStripMenuItem.Click += new System.EventHandler(this.Top100ToolStripMenuItem_Click);
             // 
             // dgv
             // 
@@ -86,21 +100,40 @@ namespace SpaceInvaders
             this.dgv.ColumnHeadersHeightSizeMode = System.Windows.Forms.DataGridViewColumnHeadersHeightSizeMode.AutoSize;
             this.dgv.Location = new System.Drawing.Point(0, 27);
             this.dgv.Name = "dgv";
+            this.dgv.ReadOnly = true;
             this.dgv.Size = new System.Drawing.Size(800, 423);
             this.dgv.TabIndex = 1;
             // 
             // txtFilter
             // 
-            this.txtFilter.Location = new System.Drawing.Point(681, 4);
+            this.txtFilter.Location = new System.Drawing.Point(575, 3);
             this.txtFilter.Name = "txtFilter";
-            this.txtFilter.Size = new System.Drawing.Size(107, 20);
+            this.txtFilter.Size = new System.Drawing.Size(86, 20);
             this.txtFilter.TabIndex = 2;
+            this.txtFilter.TextChanged += new System.EventHandler(this.TxtFilter_TextChanged);
+            // 
+            // cbFilters
+            // 
+            this.cbFilters.AutoCompleteMode = System.Windows.Forms.AutoCompleteMode.SuggestAppend;
+            this.cbFilters.FormattingEnabled = true;
+            this.cbFilters.Location = new System.Drawing.Point(667, 3);
+            this.cbFilters.Name = "cbFilters";
+            this.cbFilters.Size = new System.Drawing.Size(121, 21);
+            this.cbFilters.TabIndex = 3;
+            this.cbFilters.SelectedIndexChanged += new System.EventHandler(this.CbFilters_SelectedIndexChanged);
+            // 
+            // allToolStripMenuItem
+            // 
+            this.allToolStripMenuItem.Name = "allToolStripMenuItem";
+            this.allToolStripMenuItem.Size = new System.Drawing.Size(180, 22);
+            this.allToolStripMenuItem.Text = "all";
             // 
             // Statistics
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.ClientSize = new System.Drawing.Size(800, 450);
+            this.Controls.Add(this.cbFilters);
             this.Controls.Add(this.txtFilter);
             this.Controls.Add(this.dgv);
             this.Controls.Add(this.menuStrip1);
@@ -124,5 +157,8 @@ namespace SpaceInvaders
         private System.Windows.Forms.ToolStripMenuItem top10ToolStripMenuItem;
         private System.Windows.Forms.DataGridView dgv;
         private System.Windows.Forms.TextBox txtFilter;
+        private System.Windows.Forms.ToolStripMenuItem top100ToolStripMenuItem;
+        private System.Windows.Forms.ComboBox cbFilters;
+        private System.Windows.Forms.ToolStripMenuItem allToolStripMenuItem;
     }
 }

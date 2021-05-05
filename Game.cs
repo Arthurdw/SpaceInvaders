@@ -1,11 +1,11 @@
-﻿using System;
+﻿using MySql.Data.MySqlClient;
+using System;
 using System.Collections.Generic;
 using System.Drawing;
 using System.Drawing.Drawing2D;
 using System.Drawing.Text;
 using System.Reflection;
 using System.Windows.Forms;
-using MySql.Data.MySqlClient;
 
 namespace SpaceInvaders
 {
@@ -20,6 +20,7 @@ namespace SpaceInvaders
         private readonly string _user;
         private readonly MySqlHandler _mySqlHandler;
         private bool _hasOpenedConfigScreen = false;
+        private bool _hasOpenedStatsScreen = false;
 
         public Game(int id, string user, MySqlHandler handler)
         {
@@ -34,7 +35,7 @@ namespace SpaceInvaders
         private void InitializeForm()
         {
             this.ToggleScreen(true);
-            
+
             this.Callback = WelcomeScreen.Draw;
             this.Overlay = null;
             this._overlayCooldown = DateTime.MinValue;
@@ -99,16 +100,25 @@ namespace SpaceInvaders
                         cfg.Show();
                     }
                     break;
+
                 case Keys.OemQuestion:
                     if (!WelcomeScreen.ScreenPassed)
                         this.Overlay = ControlsOverlay.Draw;
                     break;
 
+                case Keys.S:
+                    if (!_hasOpenedStatsScreen)
+                    {
+                        Statistics stats = new Statistics(this._mySqlHandler);
+                        stats.Closed += (_, __) => this._hasOpenedStatsScreen = true;
+                        this._hasOpenedStatsScreen = true;
+                        stats.Show();
+                    }
+                    goto case Keys.Down;
                 case Keys.F11:
                 case Keys.Up:
                 case Keys.Down:
                 case Keys.W:
-                case Keys.S:
                     this.HandleKeyEvent(e.KeyCode);
                     break;
 
@@ -246,6 +256,7 @@ namespace SpaceInvaders
                     }
                     else goto case Keys.Down;
                     break;
+
                 case Keys.Down:
                     if (EscapeMenu.HighlightedIndex == EscapeMenu.Items.Length - 1) break;
                     EscapeMenu.HighlightedIndex++;
