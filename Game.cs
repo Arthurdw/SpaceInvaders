@@ -107,10 +107,10 @@ namespace SpaceInvaders
                     break;
 
                 case Keys.S:
-                    if (!_hasOpenedStatsScreen)
+                    if (!GameOverMenu.Enabled && !this._hasOpenedStatsScreen)
                     {
                         Statistics stats = new Statistics(this._mySqlHandler);
-                        stats.Closed += (_, __) => this._hasOpenedStatsScreen = true;
+                        stats.Closed += (_, __) => this._hasOpenedStatsScreen = false;
                         this._hasOpenedStatsScreen = true;
                         stats.Show();
                     }
@@ -223,6 +223,7 @@ namespace SpaceInvaders
                         WelcomeScreen.ScreenPassed = true;
                         this.Callback = GameScreen.Draw;
                         this.Overlay = null;
+                        GameScreen.HasSavedHighScore = false;
                     }
                     break;
 
@@ -246,7 +247,7 @@ namespace SpaceInvaders
                     break;
 
                 case Keys.S:
-                    if (GameOverMenu.Enabled)
+                    if (GameOverMenu.Enabled && !GameScreen.HasSavedHighScore)
                     {
                         GameScreen.HasSavedHighScore = true;
                         MySqlCommand cmd = this._mySqlHandler.Prepare(

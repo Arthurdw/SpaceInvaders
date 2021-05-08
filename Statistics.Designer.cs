@@ -38,7 +38,6 @@ namespace SpaceInvaders
             this.dgv = new System.Windows.Forms.DataGridView();
             this.txtFilter = new System.Windows.Forms.TextBox();
             this.cbFilters = new System.Windows.Forms.ComboBox();
-            this.allToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.menuStrip1.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.dgv)).BeginInit();
             this.SuspendLayout();
@@ -66,8 +65,7 @@ namespace SpaceInvaders
             this.globalToolStripMenuItem.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] {
             this.top5ToolStripMenuItem,
             this.top10ToolStripMenuItem,
-            this.top100ToolStripMenuItem,
-            this.allToolStripMenuItem});
+            this.top100ToolStripMenuItem});
             this.globalToolStripMenuItem.Name = "globalToolStripMenuItem";
             this.globalToolStripMenuItem.Size = new System.Drawing.Size(53, 20);
             this.globalToolStripMenuItem.Text = "Global";
@@ -122,12 +120,6 @@ namespace SpaceInvaders
             this.cbFilters.TabIndex = 3;
             this.cbFilters.SelectedIndexChanged += new System.EventHandler(this.CbFilters_SelectedIndexChanged);
             // 
-            // allToolStripMenuItem
-            // 
-            this.allToolStripMenuItem.Name = "allToolStripMenuItem";
-            this.allToolStripMenuItem.Size = new System.Drawing.Size(180, 22);
-            this.allToolStripMenuItem.Text = "all";
-            // 
             // Statistics
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
@@ -159,6 +151,5 @@ namespace SpaceInvaders
         private System.Windows.Forms.TextBox txtFilter;
         private System.Windows.Forms.ToolStripMenuItem top100ToolStripMenuItem;
         private System.Windows.Forms.ComboBox cbFilters;
-        private System.Windows.Forms.ToolStripMenuItem allToolStripMenuItem;
     }
 }

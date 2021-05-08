@@ -1,19 +1,13 @@
-﻿using System;
-using System.Collections.Generic;
-using System.ComponentModel;
-using System.Data;
-using System.Drawing;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+﻿using MySql.Data.MySqlClient;
+using System;
 using System.Windows.Forms;
-using MySql.Data.MySqlClient;
 
 namespace SpaceInvaders
 {
     public partial class ConfigScreen : Form
     {
         private readonly MySqlHandler _mySqlHandler;
+
         public ConfigScreen(MySqlHandler handler)
         {
             InitializeComponent();
@@ -26,7 +20,7 @@ namespace SpaceInvaders
             btnTheme1.BackColor = Config.Themes.Default.Accent;
             btnTheme2.BackColor = Config.Themes.Retro.Accent;
             btnTheme3.BackColor = Config.Themes.Stylish.Accent;
-            this.Height = Config.IsAdmin ? 357 : 310; 
+            this.Height = Config.IsAdmin ? 357 : 310;
         }
 
         private void BtnTheme1_Click(object sender, EventArgs e)
@@ -97,7 +91,7 @@ namespace SpaceInvaders
         private void BtnClearDatabase_Click(object sender, EventArgs e)
         {
             DialogResult res = MessageBox.Show(@"This action is irreversible and will delete all user data! (so no admin data) Are you sure you want to continue?", @"WARNING", MessageBoxButtons.OKCancel, MessageBoxIcon.Asterisk);
-            
+
             if (res == DialogResult.OK)
             {
                 MySqlCommand cmd =

@@ -1,7 +1,5 @@
 ﻿using MySql.Data.MySqlClient;
 using System;
-using System.Security.Cryptography;
-using System.Text;
 using System.Windows.Forms;
 
 namespace SpaceInvaders
@@ -52,7 +50,7 @@ namespace SpaceInvaders
                 {
                     int id = (int)rdr[0];
                     string name = (string)rdr[1];
-                    Config.IsAdmin = (bool) rdr[2];
+                    Config.IsAdmin = (bool)rdr[2];
                     valid = true;
 
                     this.OpenGame(id, name);

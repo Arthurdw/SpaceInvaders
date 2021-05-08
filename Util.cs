@@ -1,13 +1,9 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Security.Cryptography;
+﻿using System.Security.Cryptography;
 using System.Text;
-using System.Threading.Tasks;
 
 namespace SpaceInvaders
 {
-    class Util
+    internal class Util
     {
         public static string HashPassword(string pwd, string username)
         {

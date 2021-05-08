@@ -25,6 +25,9 @@ namespace SpaceInvaders
         /// </summary>
         public static FontFamily FontFamily;
 
+        /// <summary>
+        /// General project its string format. (centered)
+        /// </summary>
         public static StringFormat StringFormat = new StringFormat
         {
             LineAlignment = StringAlignment.Center,
