@@ -13,16 +13,14 @@ namespace SpaceInvaders
             for (int i = 0; i < dt.Length; i++)
                 dt[i] = (byte)(~dt[i] | dt[i] >> 2 & dt[i] << 2);
 
-            using (SHA512 sha512Hash = SHA512.Create())
-            {
-                byte[] bytes = sha512Hash.ComputeHash(dt);
+            using SHA512 sha512Hash = SHA512.Create();
+            byte[] bytes = sha512Hash.ComputeHash(dt);
 
-                StringBuilder sb = new StringBuilder();
-                foreach (byte t in bytes)
-                    sb.Append(t.ToString("x"));
+            StringBuilder sb = new StringBuilder();
+            foreach (byte t in bytes)
+                sb.Append(t.ToString("x"));
 
-                return sb.ToString();
-            }
+            return sb.ToString();
         }
     }
 }

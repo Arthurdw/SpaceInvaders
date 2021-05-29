@@ -83,7 +83,7 @@ namespace SpaceInvaders
             {
                 MessageBox.Show(@"Length value for filter is invalid. (not a valid number)");
             }
-            catch (Exception e) when (e is ArgumentNullException || e is OverflowException)
+            catch (Exception e) when (e is ArgumentNullException or OverflowException)
             {
                 MessageBox.Show(@"Length value for filter is invalid. (no value was given or value was too big)");
             }
@@ -92,29 +92,16 @@ namespace SpaceInvaders
             {
                 //    1          2       3       4         5        6
                 // "minutes", "hours", "days", "weeks", "months", "years"
-                switch (cbFilters.SelectedIndex)
+                return cbFilters.SelectedIndex switch
                 {
-                    case 1:
-                        return DateTime.UtcNow.AddMinutes(-from);
-
-                    case 2:
-                        return DateTime.UtcNow.AddHours(-from);
-
-                    case 3:
-                        return DateTime.UtcNow.AddDays(-from);
-
-                    case 4:
-                        return DateTime.UtcNow.AddDays(-(from * 7));
-
-                    case 5:
-                        return DateTime.UtcNow.AddMonths(-from);
-
-                    case 6:
-                        return DateTime.UtcNow.AddYears(-from);
-
-                    default:
-                        throw new NotImplementedException($@"{cbFilters.SelectedIndex} is not a valid index!");
-                }
+                    1 => DateTime.UtcNow.AddMinutes(-@from),
+                    2 => DateTime.UtcNow.AddHours(-@from),
+                    3 => DateTime.UtcNow.AddDays(-@from),
+                    4 => DateTime.UtcNow.AddDays(-(@from * 7)),
+                    5 => DateTime.UtcNow.AddMonths(-@from),
+                    6 => DateTime.UtcNow.AddYears(-@from),
+                    _ => throw new NotImplementedException($@"{cbFilters.SelectedIndex} is not a valid index!")
+                };
             }
 
             this.FillWithPersonalScores(GetDatetimeByFilter(val));

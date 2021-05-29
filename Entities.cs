@@ -144,7 +144,6 @@ namespace SpaceInvaders
             /// </summary>
             public void Draw(Graphics g)
             {
-                // TODO: Fix weird animation bug
                 RectangleF[] shape;
                 if (_iteration == AnimationSpeed * 2) _iteration = 0;
 
@@ -192,102 +191,36 @@ namespace SpaceInvaders
 
         public class Shield
         {
-            public Rectangle Rect;
-            public List<Rectangle> ShotsTaken = new List<Rectangle>();
+            public Rectangle Wrapper;
+
+            public List<Rectangle> Protectors = new(20);
 
             public Shield(int x, int y, int width, int height)
             {
-                this.Rect = new Rectangle(x, y, width, height);
+                this.Wrapper = new Rectangle(x, y, width, height);
+
+                int protectorWidth = width / 5,
+                    protectorHeight = height / 6;
+
+                int horizontalSpacing = protectorWidth / 3,
+                    verticalSpacing = protectorHeight / 4;
+
+                int idx = 0;
+
+                for (int i = 0; i < 5; i++)
+                {
+                    for (int j = 0; j < 4; j++)
+                    {
+                        Protectors.Add(new Rectangle(x + protectorWidth * j + horizontalSpacing * j, y + protectorHeight * i + verticalSpacing * i, protectorWidth, protectorHeight));
+                        idx++;
+                    }
+                }
             }
 
             public void Draw(Graphics g)
             {
-                g.FillRectangle(new SolidBrush(Config.Colors.Accent), Rect);
-
-                // TODO: Fix these optimizations:
-                // if (ShotsTaken.Count)
-                // {
-                //     List<Rectangle> mergedShots = new List<Rectangle>();
-                //     List<Rectangle> removeBuffer = new List<Rectangle>();
-
-                // foreach (Rectangle rectangle in ShotsTaken)
-                // {
-                //     Rectangle rectangleBuffer = rectangle;
-                //     foreach (Rectangle comp in ShotsTaken.Where(c => rectangle != c))
-                //     {
-                //         if (rectangle.Top == comp.Top && rectangle.Bottom == comp.Bottom)
-                //         {
-                //             bool isRight = comp.Left <= rectangle.Right && comp.Right >= rectangle.Right;
-                //             if (isRight || comp.Right >= rectangle.Left && comp.Left <= rectangle.Left)
-                //             {
-                //                 rectangleBuffer.X = isRight ? rectangle.X : comp.X;
-                //                 rectangleBuffer.Width = isRight
-                //                     ? comp.X + comp.Width - rectangle.X
-                //                     : rectangle.X + rectangle.Width - comp.X;
-                //                 removeBuffer.Add(comp);
-                //             }
-                //         } else if (rectangle.Left == comp.Left && rectangle.Right == comp.Right)
-                //         {
-                //             bool isTop = comp.Top <= rectangle.Top && comp.Bottom >= rectangle.Top;
-                //
-                //             if (isTop || comp.Bottom >= rectangle.Bottom && comp.Top <= rectangle.Bottom)
-                //             {
-                //                 rectangleBuffer.Y = isTop ? comp.Y : rectangle.Y;
-                //                 rectangleBuffer.Height =
-                //                     isTop
-                //                         ? comp.Y + comp.Height - rectangle.Y
-                //                         : rectangle.Y + rectangle.Height - comp.Y;
-                //             }
-                //             removeBuffer.Add(comp);
-                //         }
-
-                // if (rectangle.Bottom == comp.Bottom && rectangle.Top == comp.Top && rectangle.X <= comp.X && rectangle.Right >= comp.X)
-                //     rectangleBuffer.Width = comp.X + comp.Width - rectangle.X;
-                // else if (rectangle.X == comp.X && rectangle.Right == comp.Right && rectangle.Top <= comp.Top &&
-                //          rectangle.Bottom >= comp.Top)
-                //     rectangleBuffer.Height = comp.Y + comp.Height - rectangle.Y;
-                // else removeBuffer.Add(comp);
-                // }
-
-                // Console.WriteLine(rectangleBuffer.Width);
-                //     mergedShots.Add(rectangleBuffer);
-                // }
-
-                //     foreach (Rectangle rectangle in removeBuffer)
-                //         mergedShots.Remove(rectangle);
-                //
-                //     Console.WriteLine(mergedShots.Count);
-                //
-                //     ShotsTaken = mergedShots;
-                // }
-
-                // TODO: Fix these optimizations:
-                // List<Rectangle> mergedShots = new List<Rectangle>();
-                // List<Rectangle> removeBuffer = new List<Rectangle>();
-                //
-                // foreach (Rectangle rectangle in ShotsTaken)
-                // {
-                //     Rectangle rectangleBuffer = rectangle;
-                //     foreach (var comp in ShotsTaken.Where(c => rectangle != c))
-                //     {
-                //         if (rectangle.Bottom == comp.Bottom && rectangle.X <= comp.X && rectangle.X + rectangle.Width >= comp.X)
-                //         {
-                //             rectangleBuffer.Width = comp.X + comp.Width - rectangle.X;
-                //             removeBuffer.Add(comp);
-                //         }
-                //     }
-                //     mergedShots.Add(rectangleBuffer);
-                // }
-                //
-                // foreach (Rectangle rectangle in removeBuffer)
-                //     mergedShots.Remove(rectangle);
-                //
-                // Console.WriteLine(mergedShots.Count);
-                // ShotsTaken = mergedShots;
-
-                Brush br = new SolidBrush(Config.Colors.PrimaryDarkest);
-                foreach (Rectangle rectangle in ShotsTaken)
-                    g.FillRectangle(br, rectangle);
+                if (Protectors.Count > 0)
+                    g.FillRectangles(new SolidBrush(Config.Colors.Accent), Protectors.ToArray());
             }
         }
     }

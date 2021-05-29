@@ -37,7 +37,7 @@ namespace SpaceInvaders
         public static bool IsPlayingSong;
 
         public static int EntitiesIterationSpeed = 8;
-        public static readonly SoundPlayer SpSong = new SoundPlayer("./assets/sound/song.wav");
+        public static readonly SoundPlayer SpSong = new("./assets/sound/song.wav");
 
         static WelcomeScreen()
         {

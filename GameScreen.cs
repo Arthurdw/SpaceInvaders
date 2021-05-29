@@ -36,13 +36,13 @@ namespace SpaceInvaders
         /// <summary>
         /// Whether or not the game is currently paused.
         /// </summary>
-        public static bool IsPaused = false;
+        public static bool IsPaused;
 
         private const int EntitiesPerRow = 11;
         private static int _entityAnimationIteration;
         private static bool _isGoingRight = true;
         public static int Speed => LivingEntities.Count;
-        private static readonly Random Rn = new Random();
+        private static readonly Random Rn = new();
         public static int Score;
         public static int HighScore;
         public static bool HasSavedHighScore = false;
@@ -53,21 +53,21 @@ namespace SpaceInvaders
         /// <summary>
         /// All the actions that should be taken for the next draw.
         /// </summary>
-        public static List<Action<Panel, Graphics>> ActionBuffer = new List<Action<Panel, Graphics>>();
+        public static List<Action<Panel, Graphics>> ActionBuffer = new();
 
         /// <summary>
         /// A list of all the bullets that are currently on screen.
         /// </summary>
-        public static List<Entities.Bullet> Bullets = new List<Entities.Bullet>();
+        public static List<Entities.Bullet> Bullets = new();
 
-        public static List<Entities.Entity> LivingEntities = new List<Entities.Entity>();
-        public static List<Entities.Shield> Shields = new List<Entities.Shield>();
-        private static readonly SoundPlayer Sp1 = new SoundPlayer("./assets/sound/move1.wav");
-        private static readonly SoundPlayer Sp2 = new SoundPlayer("./assets/sound/move2.wav");
-        private static readonly SoundPlayer Sp3 = new SoundPlayer("./assets/sound/move3.wav");
-        private static readonly SoundPlayer Sp4 = new SoundPlayer("./assets/sound/move4.wav");
-        private static readonly SoundPlayer SpShoot = new SoundPlayer("./assets/sound/shoot.wav");
-        private static readonly SoundPlayer SpInvaderKilled = new SoundPlayer("./assets/sound/invaderkilled.wav");
+        public static List<Entities.Entity> LivingEntities = new();
+        public static List<Entities.Shield> Shields = new();
+        private static readonly SoundPlayer Sp1 = new("./assets/sound/move1.wav");
+        private static readonly SoundPlayer Sp2 = new("./assets/sound/move2.wav");
+        private static readonly SoundPlayer Sp3 = new("./assets/sound/move3.wav");
+        private static readonly SoundPlayer Sp4 = new("./assets/sound/move4.wav");
+        private static readonly SoundPlayer SpShoot = new("./assets/sound/shoot.wav");
+        private static readonly SoundPlayer SpInvaderKilled = new("./assets/sound/invaderkilled.wav");
 
         /// <summary>
         /// Draws the GameScreen.
@@ -128,22 +128,30 @@ namespace SpaceInvaders
                         {
                             foreach (Entities.Shield shield in Shields)
                             {
-                                if (!(bulletRight >= shield.Rect.Left) || !(bulletLeft <= shield.Rect.Right) ||
-                                    !(bulletBottom >= shield.Rect.Top) || bullet.Y > shield.Rect.Bottom) continue;
-                                bool collision = true;
-                                foreach (var _ in shield.ShotsTaken.Where(rectangle => bulletLeft >= rectangle.Left &&
-                                    bulletRight <= rectangle.Right &&
-                                    (bullet.ByPlayer ? bullet.Y >= rectangle.Top : bulletBottom <= rectangle.Bottom)))
-                                    collision = false;
+                                if (!(bulletRight >= shield.Wrapper.Left) || !(bulletLeft <= shield.Wrapper.Right) ||
+                                    !(bulletBottom >= shield.Wrapper.Top) || bullet.Y > shield.Wrapper.Bottom) continue;
 
-                                if (!collision) continue;
-                                shield.ShotsTaken.Add(new Rectangle(
-                                    bullet.X - (int)((bulletRight - bullet.X) * 2.5) / 2,
-                                    bullet.Y + (bullet.ByPlayer ? -1 : 1) * (int)(bulletBottom - bullet.Y) - 6,
-                                    (int)(bulletRight - bullet.X) * 3,
-                                    (int)((bulletBottom - bullet.Y) * 1.25) + 12));
-                                removeBulletBuffer.Add(bullet);
-                                break;
+                                bool collision = false;
+
+                                if (bulletBottom >= shield.Wrapper.Y && bulletRight >= shield.Wrapper.X &&
+                                    bullet.X <= shield.Wrapper.Right && bullet.Y <= shield.Wrapper.Bottom)
+                                {
+                                    for (int i = 0; i < shield.Protectors.Count; i++)
+                                    {
+                                        Rectangle protector = shield.Protectors[i];
+                                        if (bulletBottom >= protector.Y && bulletRight >= protector.X && bulletLeft <= protector.Right && bullet.Y <= protector.Bottom)
+                                        {
+                                            shield.Protectors.RemoveAt(i);
+                                            collision = true;
+                                        }
+                                    }
+                                }
+
+                                if (collision)
+                                {
+                                    removeBulletBuffer.Add(bullet);
+                                    break;
+                                }
                             }
                         }
 
@@ -233,12 +241,20 @@ namespace SpaceInvaders
 
             foreach (Entities.Entity entity in LivingEntities)
             {
+                int entityBottom = entity.Y + Entities.Size,
+                    entityRight = entity.X + Entities.Size;
+
                 foreach (Entities.Shield shield in Shields)
                 {
-                    if (entity.Y + Entities.Size >= shield.Rect.Y && entity.X + Entities.Size >= shield.Rect.X &&
-                        entity.X <= shield.Rect.Right && entity.Y <= shield.Rect.Bottom)
+                    if (entityBottom >= shield.Wrapper.Y && entityRight >= shield.Wrapper.X &&
+                        entity.X <= shield.Wrapper.Right && entity.Y <= shield.Wrapper.Bottom)
                     {
-                        shield.ShotsTaken.Add(new Rectangle(entity.X, entity.Y, Entities.Size, Entities.Size));
+                        for (int i = 0; i < shield.Protectors.Count; i++)
+                        {
+                            Rectangle protector = shield.Protectors[i];
+                            if (entityBottom >= protector.Y && entityRight >= protector.X && entity.X <= protector.Right && entity.Y <= protector.Bottom)
+                                shield.Protectors.RemoveAt(i);
+                        }
                         break;
                     }
                 }
@@ -347,6 +363,7 @@ namespace SpaceInvaders
             game.Overlay = (_, __) => { };
             IsFirstInteraction = true;
             GameScreen.HasSavedHighScore = false;
+            Bullets = new List<Entities.Bullet>();
             SpawnEntities(pnl);
         }
 
